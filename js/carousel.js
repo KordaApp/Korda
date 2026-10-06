@@ -1,157 +1,168 @@
-export function initServersCarousel(trackId, containerId, servers) {
-  const track = document.getElementById(trackId);
-  const container = document.getElementById(containerId);
+/**
+ * Carrossel infinito de servidores.
+ * Arrastável com mouse e touch (Pointer Events).
+ * Com inércia e snap automático para o item mais próximo.
+ */
+export function initCarousel(trackEl, containerEl, servers, onSelect) {
+  if (!servers.length) {
+    trackEl.innerHTML = "";
+    return;
+  }
 
-  if (!track || !container || !servers.length) return;
-
-  // -------- Render base --------
-  const itemHTML = (s) => `
-    <div class="server-item" data-id="${s.id}" title="${s.name}">
+  const itemHTML = (s, i) => `
+    <div class="server-item" data-id="${s.id}" data-index="${i}" title="${s.name || ''}">
       ${s.icon
-        ? `<img src="${s.icon}" alt="${s.name}" draggable="false">`
-        : s.name.slice(0, 2).toUpperCase()}
-    </div>
-  `;
+        ? `<img src="${s.icon}" alt="" draggable="false">`
+        : (s.name || "?").slice(0, 2).toUpperCase()}
+    </div>`;
 
-  // Repete o suficiente pra encher 3x a largura do container
-  const placeholder = servers.map(itemHTML).join("");
-  track.innerHTML = placeholder; // 1 cópia pra medir
+  // Renderiza 3 cópias para dar sensação de continuidade
+  const set = servers.map(itemHTML).join("");
+  trackEl.innerHTML = set + set + set;
 
+  // Aguarda o layout para medir
   requestAnimationFrame(() => {
-    const sampleItem = track.querySelector(".server-item");
-    if (!sampleItem) return;
+    const firstItem = trackEl.querySelector(".server-item");
+    if (!firstItem) return;
 
-    const gap = 10;
-    const itemW = sampleItem.offsetWidth + gap;
-    const setW = itemW * servers.length;
-    const containerW = container.offsetWidth;
+    const GAP = 10;
+    const itemW = firstItem.offsetWidth;
+    const step = itemW + GAP;
+    const setW = servers.length * step;
 
-    const copies = Math.max(3, Math.ceil((containerW * 3) / setW) + 1);
-    track.innerHTML = Array(copies).fill(placeholder).join("");
-
-    // -------- Estado --------
-    // Começa no meio (segunda cópia) pra poder arrastar pros dois lados
-    let offset = -setW * Math.floor(copies / 2);
-    let velocity = 0;
-    let isDragging = false;
+    let offset = 0;
+    let dragging = false;
     let startX = 0;
     let startOffset = 0;
+    let lastX = 0;
+    let lastT = 0;
+    let velocity = 0;
     let moved = 0;
     let rafId = null;
 
     function render() {
-      track.style.transform = `translate3d(${offset}px, 0, 0)`;
+      trackEl.style.transform = `translate3d(${offset}px, 0, 0)`;
     }
 
-    function normalize() {
-      // Mantém o offset dentro de [-(copies-1)*setW, 0]
-      const totalW = setW * copies;
-      const minOffset = -(totalW - setW); // deixa pelo menos 1 cópia visível à direita
-      if (offset > 0) offset -= setW;
-      if (offset < minOffset) offset += setW;
-    }
-
-    function applyInertia() {
-      if (Math.abs(velocity) < 0.4) { velocity = 0; return; }
-      offset += velocity;
-      velocity *= 0.92;
-      normalize();
-      render();
-      rafId = requestAnimationFrame(applyInertia);
-    }
-
-    // -------- Pointer Events --------
-    container.addEventListener("pointerdown", (e) => {
-      if (e.button !== undefined && e.button !== 0) return; // só botão esquerdo
-      isDragging = true;
-      moved = 0;
-      startX = e.clientX;
-      startOffset = offset;
-      velocity = 0;
-      container.classList.add("dragging");
-      container.setPointerCapture(e.pointerId);
-      if (rafId) cancelAnimationFrame(rafId);
-    });
-
-    container.addEventListener("pointermove", (e) => {
-      if (!isDragging) return;
-      const dx = e.clientX - startX;
-      moved = Math.abs(dx);
-      offset = startOffset + dx;
-      normalize();
-      render();
-    });
-
-    container.addEventListener("pointerup", (e) => {
-      if (!isDragging) return;
-      isDragging = false;
-      container.classList.remove("dragging");
-
-      // Inércia baseada na velocidade do último movimento
-      const dx = e.clientX - startX;
-      velocity = dx * 0.4;
-      rafId = requestAnimationFrame(applyInertia);
-    });
-
-    container.addEventListener("pointercancel", () => {
-      isDragging = false;
-      container.classList.remove("dragging");
-    });
-
-    // -------- Clique nos servidores --------
-    track.addEventListener("click", (e) => {
-      // Se o usuário arrastou, ignora o clique
-      if (moved > 6) return;
-
-      const item = e.target.closest(".server-item");
-      if (!item) return;
-
-      // Atualiza visual
-      track.querySelectorAll(".server-item.active")
-        .forEach(el => el.classList.remove("active"));
-      item.classList.add("active");
-
-      const id = item.dataset.id;
-      const server = servers.find(s => s.id === id);
-      console.log("Servidor selecionado:", server);
-
-      // Centraliza o servidor clicado
-      centerOn(item);
-    });
-
-    function centerOn(item) {
-      const itemLeft = item.offsetLeft; // dentro do track
-      const itemCenter = itemLeft + item.offsetWidth / 2;
-      const containerCenter = container.offsetWidth / 2;
-      const target = containerCenter - itemCenter;
-
-      // Anima suavemente até o alvo
-      animateTo(target);
+    function clampOffset() {
+      // Mantém offset dentro de [-2*setW, 0] para sempre mostrar conteúdo
+      while (offset > 0) offset -= setW;
+      while (offset < -2 * setW) offset += setW;
     }
 
     function animateTo(target) {
       if (rafId) cancelAnimationFrame(rafId);
-      const step = () => {
+      const stepFn = () => {
         const diff = target - offset;
-        if (Math.abs(diff) < 0.5) { offset = target; render(); return; }
-        offset += diff * 0.18;
-        normalize();
+        if (Math.abs(diff) < 0.5) {
+          offset = target;
+          clampOffset();
+          render();
+          rafId = null;
+          return;
+        }
+        offset += diff * 0.2;
         render();
-        rafId = requestAnimationFrame(step);
+        rafId = requestAnimationFrame(stepFn);
       };
-      step();
+      stepFn();
     }
 
-    // Scroll horizontal com a roda do mouse (opcional, ajuda no desktop)
-    container.addEventListener("wheel", (e) => {
+    function inertiaLoop() {
+      if (Math.abs(velocity) < 0.4) {
+        // Snapa para o item mais próximo
+        const snap = Math.round(offset / step) * step;
+        animateTo(snap);
+        return;
+      }
+      offset += velocity;
+      velocity *= 0.93;
+      clampOffset();
+      render();
+      rafId = requestAnimationFrame(inertiaLoop);
+    }
+
+    // -------- Pointer events --------
+    containerEl.addEventListener("pointerdown", (e) => {
+      if (e.button !== undefined && e.button !== 0) return;
+      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+      dragging = true;
+      moved = 0;
+      startX = e.clientX;
+      startOffset = offset;
+      lastX = e.clientX;
+      lastT = performance.now();
+      velocity = 0;
+      containerEl.classList.add("dragging");
+      try { containerEl.setPointerCapture(e.pointerId); } catch (_) {}
+    });
+
+    containerEl.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const dx = e.clientX - startX;
+      moved = Math.max(moved, Math.abs(dx));
+      offset = startOffset + dx;
+      clampOffset();
+      render();
+
+      const now = performance.now();
+      const dt = now - lastT;
+      if (dt > 0) {
+        velocity = ((e.clientX - lastX) / dt) * 16;
+        lastX = e.clientX;
+        lastT = now;
+      }
+    });
+
+    function endDrag(e) {
+      if (!dragging) return;
+      dragging = false;
+      containerEl.classList.remove("dragging");
+      try { containerEl.releasePointerCapture(e.pointerId); } catch (_) {}
+      if (Math.abs(velocity) > 2) {
+        rafId = requestAnimationFrame(inertiaLoop);
+      } else {
+        const snap = Math.round(offset / step) * step;
+        animateTo(snap);
+      }
+    }
+
+    containerEl.addEventListener("pointerup", endDrag);
+    containerEl.addEventListener("pointercancel", endDrag);
+
+    // -------- Clique em servidor --------
+    trackEl.addEventListener("click", (e) => {
+      if (moved > 8) return;
+      const item = e.target.closest(".server-item");
+      if (!item) return;
+      const id = item.dataset.id;
+      const idx = +item.dataset.index;
+
+      trackEl.querySelectorAll(".server-item.active")
+        .forEach(el => el.classList.remove("active"));
+      trackEl.querySelectorAll(`.server-item[data-id="${id}"]`)
+        .forEach(el => el.classList.add("active"));
+
+      // Centraliza o item clicado
+      const itemX = idx * step;
+      const containerCx = containerEl.offsetWidth / 2;
+      const target = containerCx - itemW / 2 - itemX;
+      animateTo(target);
+
+      const server = servers.find(s => s.id === id);
+      if (server) onSelect?.(server);
+    });
+
+    // Roda do mouse horizontal (desktop)
+    containerEl.addEventListener("wheel", (e) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault();
-        offset -= e.deltaX;
-        normalize();
+        offset -= e.deltaX * 0.5;
+        clampOffset();
         render();
       }
     }, { passive: false });
 
     render();
   });
-        }
+}
