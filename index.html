@@ -55,7 +55,7 @@
 
 <div class="app hidden" id="app">
   <header class="topbar">
-    <button class="topbar-btn mobile-only" id="btn-sidebar" title="Canais"><svg class="icon"><use href="#i-menu"/></svg></button>
+    <button class="topbar-btn mobile-only" id="btn-sidebar"><svg class="icon"><use href="#i-menu"/></svg></button>
     <div class="topbar-logo" id="btn-my-profile" title="Meu perfil">K</div>
     <div class="servers-carousel" id="servers-carousel">
       <div class="servers-track" id="servers-track"></div>
@@ -76,9 +76,7 @@
       <div class="server-header">
         <div class="server-header-top">
           <h2 id="server-name">Selecione um servidor</h2>
-          <button class="icon-btn" id="btn-server-settings" title="Configurações do servidor">
-            <svg class="icon"><use href="#i-settings"/></svg>
-          </button>
+          <button class="icon-btn" id="btn-server-settings" title="Configurações"><svg class="icon"><use href="#i-settings"/></svg></button>
         </div>
         <span id="server-sub">—</span>
         <div class="server-tag" id="server-tag"></div>
@@ -121,13 +119,9 @@
   </div>
 </div>
 
-<!-- Modal criar servidor -->
 <div class="modal-backdrop hidden" id="modal-backdrop">
   <div class="modal">
-    <div class="modal-head">
-      <h3>Criar servidor</h3>
-      <button class="icon-btn" id="modal-close"><svg class="icon"><use href="#i-close"/></svg></button>
-    </div>
+    <div class="modal-head"><h3>Criar servidor</h3><button class="icon-btn" id="modal-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <form id="form-create-server">
       <label><span>Nome do servidor</span><input type="text" id="server-name-input" placeholder="Ex: KORDA BR" required maxlength="40" /></label>
       <label><span>Descrição (opcional)</span><input type="text" id="server-desc-input" placeholder="Servidor de comunidade" maxlength="80" /></label>
@@ -136,52 +130,52 @@
   </div>
 </div>
 
-<!-- Modal criar canal -->
 <div class="modal-backdrop hidden" id="channel-backdrop">
   <div class="modal">
-    <div class="modal-head">
-      <h3>Criar canal</h3>
-      <button class="icon-btn" id="channel-close"><svg class="icon"><use href="#i-close"/></svg></button>
-    </div>
+    <div class="modal-head"><h3>Criar canal</h3><button class="icon-btn" id="channel-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <form id="form-create-channel">
       <div class="type-picker">
-        <label class="type-opt">
-          <input type="radio" name="channel-type" value="text" checked />
-          <span class="type-box"><svg class="icon"><use href="#i-hash"/></svg> Texto</span>
-        </label>
-        <label class="type-opt">
-          <input type="radio" name="channel-type" value="voice" />
-          <span class="type-box"><svg class="icon"><use href="#i-volume"/></svg> Voz</span>
-        </label>
+        <label class="type-opt"><input type="radio" name="channel-type" value="text" checked /><span class="type-box"><svg class="icon"><use href="#i-hash"/></svg> Texto</span></label>
+        <label class="type-opt"><input type="radio" name="channel-type" value="voice" /><span class="type-box"><svg class="icon"><use href="#i-volume"/></svg> Voz</span></label>
       </div>
       <label><span>Nome do canal</span><input type="text" id="channel-name-input" placeholder="ex: geral" required maxlength="30" /></label>
+      <label><span>Categoria (opcional)</span><select id="channel-category-select" style="background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;font-size:14px;"><option value="">Sem categoria</option></select></label>
       <button type="submit" class="btn-primary full">Criar canal</button>
     </form>
   </div>
 </div>
 
-<!-- Modal configurações do servidor -->
+<div class="modal-backdrop hidden" id="category-backdrop">
+  <div class="modal">
+    <div class="modal-head"><h3>Criar categoria</h3><button class="icon-btn" id="category-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <form id="form-create-category">
+      <label><span>Nome da categoria</span><input type="text" id="category-name-input" placeholder="Ex: Sala de voz" required maxlength="30" /></label>
+      <button type="submit" class="btn-primary full">Criar categoria</button>
+    </form>
+  </div>
+</div>
+
 <div class="modal-backdrop hidden" id="server-settings-backdrop">
   <div class="modal">
-    <div class="modal-head">
-      <h3>Configurações do servidor</h3>
-      <button class="icon-btn" id="server-settings-close"><svg class="icon"><use href="#i-close"/></svg></button>
-    </div>
+    <div class="modal-head"><h3>Configurações do servidor</h3><button class="icon-btn" id="server-settings-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <form id="form-server-settings">
       <label><span>Nome</span><input type="text" id="ss-name" maxlength="40" required /></label>
       <label><span>Descrição</span><input type="text" id="ss-description" maxlength="80" /></label>
-      <label><span>Bio (texto longo)</span><textarea id="ss-bio" maxlength="400" style="min-height:80px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;outline:none;font-family:inherit;font-size:14px;resize:vertical;"></textarea></label>
+      <label><span>Bio</span><textarea id="ss-bio" maxlength="400" style="min-height:80px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;outline:none;font-family:inherit;font-size:14px;resize:vertical;"></textarea></label>
       <label><span>URL do ícone (foto/.gif)</span><input type="url" id="ss-icon" placeholder="https://..." /></label>
       <label><span>URL do banner (foto/.gif)</span><input type="url" id="ss-banner" placeholder="https://..." /></label>
-      <label><span>TAG do servidor (até 4 letras)</span><input type="text" id="ss-tag" maxlength="4" placeholder="KBR" style="text-transform:uppercase;" /></label>
-      <p class="hint">Membros com a TAG ativada exibem <strong>[TAG]</strong> no perfil.</p>
+      <label><span>TAG (até 4 letras)</span><input type="text" id="ss-tag" maxlength="4" placeholder="KBR" style="text-transform:uppercase;" /></label>
+      <label style="flex-direction:row;align-items:center;gap:10px;">
+        <input type="checkbox" id="ss-tag-active" style="width:auto;" />
+        <span>Exibir TAG no meu perfil</span>
+      </label>
+      <p class="hint">Sua TAG aparece como <strong>[TAG]</strong> antes do nome no perfil.</p>
       <button type="submit" class="btn-primary full">Salvar</button>
       <button type="button" class="btn-danger full" id="btn-delete-server">Excluir servidor</button>
     </form>
   </div>
 </div>
 
-<!-- Modal call de voz -->
 <div class="modal-backdrop hidden" id="call-backdrop">
   <div class="call-modal" id="call-modal"></div>
 </div>
