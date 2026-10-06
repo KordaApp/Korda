@@ -1,9 +1,3 @@
-svg { color: inherit; }
-.icon { color: currentColor; }
-.icon * { stroke: currentColor; fill: none; }
-.icon [fill]:not([fill="none"]) { fill: currentColor; stroke: none; }
-.topbar-btn, .icon-btn, .channel, .call-btn, .topbar-logo { color: #ffffff; }
-.channel .icon, .icon-btn:not(:hover) .icon { color: #ffffff; }
 :root {
   --bg-0: #08080f;
   --bg-1: #0d0d17;
@@ -35,9 +29,13 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 14px;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 button { background: none; border: none; color: inherit; cursor: pointer; font: inherit; }
 input, textarea { font: inherit; }
 .hidden { display: none !important; }
-.icon { width: 20px; height: 20px; display: block; flex-shrink: 0; }
+.icon { width: 20px; height: 20px; display: block; flex-shrink: 0; color: currentColor; }
 .icon.sm { width: 16px; height: 16px; }
+svg { color: inherit; }
+.icon * { stroke: currentColor; }
+.icon [fill]:not([fill="none"]) { fill: currentColor; stroke: none; }
