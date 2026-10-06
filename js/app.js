@@ -289,7 +289,7 @@ function startApp() {
   });
 }
 
-onAuth(auth, (user) => {
+onAuth((user) => {
   if (user) {
     currentUser = user;
     startApp();
