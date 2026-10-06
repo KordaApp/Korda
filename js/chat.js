@@ -1,17 +1,17 @@
-import { db, auth } from "./firebase.js";
+import { rtdb, auth } from "./firebase.js";
 import {
-  collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  ref, push, set, query, limitToLast, onValue
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
-/**
- * Escuta as últimas 100 mensagens de um canal.
- */
 export function listenMessages(serverId, channelId, callback) {
-  const ref = collection(db, "servers", serverId, "channels", channelId, "messages");
-  const q = query(ref, orderBy("createdAt", "asc"), limit(100));
+  const messagesRef = ref(rtdb, `servers/${serverId}/channels/${channelId}/messages`);
+  const q = query(messagesRef, limitToLast(100));
 
-  return onSnapshot(q, (snap) => {
-    const msgs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+  return onValue(q, (snap) => {
+    const msgs = [];
+    snap.forEach((child) => {
+      msgs.push({ id: child.key, ...child.val() });
+    });
     callback(msgs);
   }, (err) => {
     console.error("Erro ao escutar mensagens:", err);
@@ -19,21 +19,20 @@ export function listenMessages(serverId, channelId, callback) {
   });
 }
 
-/**
- * Envia uma mensagem para o canal.
- */
 export async function sendMessage(serverId, channelId, content) {
   const user = auth.currentUser;
   if (!user) throw new Error("Usuário não autenticado");
   const text = content.trim();
   if (!text) return;
 
-  const ref = collection(db, "servers", serverId, "channels", channelId, "messages");
-  await addDoc(ref, {
+  const messagesRef = ref(rtdb, `servers/${serverId}/channels/${channelId}/messages`);
+  const newRef = push(messagesRef);
+
+  await set(newRef, {
     authorId: user.uid,
     authorName: user.displayName || "Usuário",
     authorAvatar: user.photoURL || "",
     content: text,
-    createdAt: serverTimestamp()
+    createdAt: Date.now()
   });
 }
