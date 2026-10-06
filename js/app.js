@@ -143,7 +143,7 @@ formCreateServer.addEventListener("submit", async (e) => {
     await createServer(currentUser.uid, name, desc);
     modalBackdrop.classList.add("hidden");
     formCreateServer.reset();
-    toast("Servidor criado!", "success");
+    toast("Servidor criado!", "Success");
   } catch (err) {
     console.error(err);
     toast("Erro ao criar servidor: " + err.message, "error");
