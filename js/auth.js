@@ -1,21 +1,17 @@
-import { auth, db } from "./firebase.js";
+import { auth, rtdb } from "./firebase.js";
 import {
   GoogleAuthProvider, signInWithPopup, signOut,
   createUserWithEmailAndPassword, signInWithEmailAndPassword,
   updateProfile, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-  doc, getDoc, setDoc, serverTimestamp
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  ref, get, set, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const googleProvider = new GoogleAuthProvider();
 
 export function onAuth(callback) {
   return onAuthStateChanged(auth, callback);
-}
-
-export function currentUid() {
-  return auth.currentUser?.uid || null;
 }
 
 export async function loginGoogle() {
@@ -42,15 +38,15 @@ export async function logout() {
 }
 
 async function ensureUserDoc(user, nameOverride) {
-  const ref = doc(db, "users", user.uid);
-  const snap = await getDoc(ref);
+  const userRef = ref(rtdb, `users/${user.uid}`);
+  const snap = await get(userRef);
   if (snap.exists()) return;
 
   const base = (user.email || "user").split("@")[0]
     .toLowerCase().replace(/[^a-z0-9]/g, "") || "user";
   const username = `${base}${Math.floor(Math.random() * 9999)}`;
 
-  await setDoc(ref, {
+  await set(userRef, {
     displayName: nameOverride || user.displayName || "Usuário",
     username,
     email: user.email || "",
@@ -58,12 +54,11 @@ async function ensureUserDoc(user, nameOverride) {
     banner: "",
     bio: "",
     status: "online",
-    createdAt: serverTimestamp(),
-    lastSeen: serverTimestamp()
+    createdAt: Date.now(),
+    lastSeen: Date.now()
   });
 }
 
-// Traduz erros do Firebase para português
 export function traduzErro(code) {
   const map = {
     "auth/invalid-email": "E-mail inválido.",
@@ -76,4 +71,4 @@ export function traduzErro(code) {
     "auth/unauthorized-domain": "Domínio não autorizado no Firebase."
   };
   return map[code] || "Erro ao autenticar. Tente novamente.";
-    }
+}
