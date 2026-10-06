@@ -1,3 +1,9 @@
+svg { color: inherit; }
+.icon { color: currentColor; }
+.icon * { stroke: currentColor; fill: none; }
+.icon [fill]:not([fill="none"]) { fill: currentColor; stroke: none; }
+.topbar-btn, .icon-btn, .channel, .call-btn, .topbar-logo { color: #ffffff; }
+.channel .icon, .icon-btn:not(:hover) .icon { color: #ffffff; }
 :root {
   --bg-0: #08080f;
   --bg-1: #0d0d17;
