@@ -1,14 +1,9 @@
 export function initCarousel(trackEl, containerEl, servers, onSelect) {
-  if (!servers.length) {
-    trackEl.innerHTML = "";
-    return;
-  }
+  if (!servers.length) { trackEl.innerHTML = ""; return; }
 
   const itemHTML = (s, i) => `
     <div class="server-item" data-id="${s.id}" data-index="${i}" title="${s.name || ''}">
-      ${s.icon
-        ? `<img src="${s.icon}" alt="" draggable="false">`
-        : (s.name || "?").slice(0, 2).toUpperCase()}
+      ${s.icon ? `<img src="${s.icon}" alt="" draggable="false">` : (s.name || "?").slice(0, 2).toUpperCase()}
     </div>`;
 
   const set = servers.map(itemHTML).join("");
@@ -23,43 +18,25 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
     const step = itemW + GAP;
     const setW = servers.length * step;
 
-    let offset = 0;
-    let dragging = false;
-    let startX = 0;
-    let startOffset = 0;
-    let lastX = 0;
-    let lastT = 0;
-    let velocity = 0;
-    let moved = 0;
-    let rafId = null;
+    let offset = 0, dragging = false, startX = 0, startOffset = 0;
+    let lastX = 0, lastT = 0, velocity = 0, moved = 0, rafId = null;
 
-    function render() {
-      trackEl.style.transform = `translate3d(${offset}px, 0, 0)`;
-    }
-
+    function render() { trackEl.style.transform = `translate3d(${offset}px, 0, 0)`; }
     function clampOffset() {
       while (offset > 0) offset -= setW;
       while (offset < -2 * setW) offset += setW;
     }
-
     function animateTo(target) {
       if (rafId) cancelAnimationFrame(rafId);
       const stepFn = () => {
         const diff = target - offset;
-        if (Math.abs(diff) < 0.5) {
-          offset = target;
-          clampOffset();
-          render();
-          rafId = null;
-          return;
-        }
+        if (Math.abs(diff) < 0.5) { offset = target; clampOffset(); render(); rafId = null; return; }
         offset += diff * 0.2;
         render();
         rafId = requestAnimationFrame(stepFn);
       };
       stepFn();
     }
-
     function inertiaLoop() {
       if (Math.abs(velocity) < 0.4) {
         const snap = Math.round(offset / step) * step;
@@ -76,12 +53,9 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
     containerEl.addEventListener("pointerdown", (e) => {
       if (e.button !== undefined && e.button !== 0) return;
       if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-      dragging = true;
-      moved = 0;
-      startX = e.clientX;
-      startOffset = offset;
-      lastX = e.clientX;
-      lastT = performance.now();
+      dragging = true; moved = 0;
+      startX = e.clientX; startOffset = offset;
+      lastX = e.clientX; lastT = performance.now();
       velocity = 0;
       containerEl.classList.add("dragging");
       try { containerEl.setPointerCapture(e.pointerId); } catch (_) {}
@@ -94,13 +68,11 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
       offset = startOffset + dx;
       clampOffset();
       render();
-
       const now = performance.now();
       const dt = now - lastT;
       if (dt > 0) {
         velocity = ((e.clientX - lastX) / dt) * 16;
-        lastX = e.clientX;
-        lastT = now;
+        lastX = e.clientX; lastT = now;
       }
     });
 
@@ -109,12 +81,8 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
       dragging = false;
       containerEl.classList.remove("dragging");
       try { containerEl.releasePointerCapture(e.pointerId); } catch (_) {}
-      if (Math.abs(velocity) > 2) {
-        rafId = requestAnimationFrame(inertiaLoop);
-      } else {
-        const snap = Math.round(offset / step) * step;
-        animateTo(snap);
-      }
+      if (Math.abs(velocity) > 2) rafId = requestAnimationFrame(inertiaLoop);
+      else { const snap = Math.round(offset / step) * step; animateTo(snap); }
     }
 
     containerEl.addEventListener("pointerup", endDrag);
@@ -126,17 +94,12 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
       if (!item) return;
       const id = item.dataset.id;
       const idx = +item.dataset.index;
-
-      trackEl.querySelectorAll(".server-item.active")
-        .forEach(el => el.classList.remove("active"));
-      trackEl.querySelectorAll(`.server-item[data-id="${id}"]`)
-        .forEach(el => el.classList.add("active"));
-
+      trackEl.querySelectorAll(".server-item.active").forEach(el => el.classList.remove("active"));
+      trackEl.querySelectorAll(`.server-item[data-id="${id}"]`).forEach(el => el.classList.add("active"));
       const itemX = idx * step;
       const containerCx = containerEl.offsetWidth / 2;
       const target = containerCx - itemW / 2 - itemX;
       animateTo(target);
-
       const server = servers.find(s => s.id === id);
       if (server) onSelect?.(server);
     });

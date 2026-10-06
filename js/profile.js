@@ -44,7 +44,6 @@ export const STATUS_LABELS = {
   offline:{ label: "Invisível", color: "#7a7a8a" }
 };
 
-// Gera o estilo de fundo do perfil com base nas preferências salvas
 export function buildProfileStyle(profile) {
   const t = profile?.profileTheme || {};
   const g = t.gradient || {};

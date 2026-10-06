@@ -1,6 +1,6 @@
 import { rtdb } from "./firebase.js";
 import {
-  ref, set, get, push, update, onValue, remove
+  ref, set, get, push, update, onValue
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 export const PERMISSIONS = [
@@ -90,9 +90,8 @@ export function listenUserServers(uid, callback) {
 export function listenChannels(serverId, callback) {
   return onValue(ref(rtdb, `servers/${serverId}/channels`), (snap) => {
     const val = snap.val() || {};
-    const channels = Object.entries(val).map(([id, d]) => ({ id, ...d }))
-      .sort((a, b) => (a.position || 0) - (b.position || 0));
-    callback(channels);
+    callback(Object.entries(val).map(([id, d]) => ({ id, ...d }))
+      .sort((a, b) => (a.position || 0) - (b.position || 0)));
   });
 }
 
@@ -159,7 +158,6 @@ export async function deleteCategory(serverId, categoryId) {
   await update(ref(rtdb), u);
 }
 
-/* ============ ROLES ============ */
 export async function createRole(serverId, { name, color, permissions }) {
   const rRef = ref(rtdb, `servers/${serverId}/roles`);
   const snap = await get(rRef);
@@ -203,27 +201,19 @@ export async function removeRole(serverId, uid, roleId) {
   await set(ref(rtdb, `servers/${serverId}/members/${uid}/roleIds/${roleId}`), null);
 }
 
-/* ============ MEMBERS ============ */
 export async function kickMember(serverId, uid) {
   await set(ref(rtdb, `servers/${serverId}/members/${uid}`), null);
   await set(ref(rtdb, `serverList/${uid}/${serverId}`), null);
 }
 
 export async function banMember(serverId, uid, reason = "") {
-  await set(ref(rtdb, `servers/${serverId}/bans/${uid}`), {
-    bannedAt: Date.now(),
-    reason
-  });
+  await set(ref(rtdb, `servers/${serverId}/bans/${uid}`), { bannedAt: Date.now(), reason });
   await kickMember(serverId, uid);
 }
 
 export async function warnMember(serverId, uid, reason, byUid) {
   const wRef = push(ref(rtdb, `servers/${serverId}/members/${uid}/warnings`));
-  await set(wRef, {
-    reason,
-    by: byUid,
-    at: Date.now()
-  });
+  await set(wRef, { reason, by: byUid, at: Date.now() });
 }
 
 export async function setMemberNick(serverId, uid, nick) {
@@ -234,7 +224,6 @@ export async function setMemberAvatar(serverId, uid, url) {
   await set(ref(rtdb, `servers/${serverId}/members/${uid}/avatar`), url || null);
 }
 
-/* ============ TAG no perfil ============ */
 export async function setUserTagActive(uid, serverId, tag, icon, active) {
   if (active && tag) {
     await set(ref(rtdb, `users/${uid}/activeTags/${serverId}`), { tag, icon: icon || "" });
@@ -246,4 +235,12 @@ export async function setUserTagActive(uid, serverId, tag, icon, active) {
 export async function getUserActiveTags(uid) {
   const snap = await get(ref(rtdb, `users/${uid}/activeTags`));
   return snap.exists() ? snap.val() : {};
-                                   }
+}
+
+export async function addServerToUserIndex(uid, serverId, serverName, serverIcon = "") {
+  await update(ref(rtdb), {
+    [`serverList/${uid}/${serverId}/name`]: serverName,
+    [`serverList/${uid}/${serverId}/icon`]: serverIcon,
+    [`serverList/${uid}/${serverId}/addedAt`]: Date.now()
+  });
+}

@@ -6,9 +6,9 @@ import {
   listenUserServers, listenChannels, listenCategories,
   createChannel, deleteChannel, createCategory, deleteCategory,
   listenRoles, listenMembers, createRole, updateRole, deleteRole,
-  assignRole, removeRole, kickMember, banMember, warnMember,
+  kickMember, banMember, warnMember,
   setMemberNick, setMemberAvatar,
-  setUserTagActive, getUserActiveTags, PERMISSIONS, DEFAULT_PERMS
+  setUserTagActive, getUserActiveTags, PERMISSIONS
 } from "./servers.js";
 import { listenMessages, sendMessage, sendImageMessage } from "./chat.js";
 import { renderEmojiPicker } from "./emoji.js";
@@ -137,11 +137,11 @@ function escapeHTML(s) {
   return div.innerHTML;
 }
 
-/* ---------- SIDEBAR ---------- */
+/* SIDEBAR */
 btnSidebar.addEventListener("click", () => appBody.classList.toggle("sidebar-open"));
 sidebarBackdrop.addEventListener("click", () => appBody.classList.remove("sidebar-open"));
 
-/* ---------- LOGIN ---------- */
+/* LOGIN */
 btnToggleMode.addEventListener("click", () => {
   authMode = authMode === "login" ? "register" : "login";
   if (authMode === "register") {
@@ -190,7 +190,7 @@ btnLogout.addEventListener("click", async () => {
   toast("Você saiu da conta");
 });
 
-/* ---------- CRIAR SERVIDOR ---------- */
+/* CRIAR SERVIDOR */
 btnAddServer.addEventListener("click", () => { modalBackdrop.classList.remove("hidden"); serverNameInput.focus(); });
 modalClose.addEventListener("click", () => modalBackdrop.classList.add("hidden"));
 modalBackdrop.addEventListener("click", (e) => { if (e.target === modalBackdrop) modalBackdrop.classList.add("hidden"); });
@@ -210,7 +210,7 @@ formCreateServer.addEventListener("submit", async (e) => {
   finally { btn.disabled = false; btn.textContent = "Criar servidor"; }
 });
 
-/* ---------- CRIAR CANAL / CATEGORIA ---------- */
+/* CANAIS / CATEGORIAS */
 function openCreateChannelModal(type = "text") {
   createChannelType = type;
   channelBackdrop.classList.remove("hidden");
@@ -263,7 +263,7 @@ formCreateCategory.addEventListener("submit", async (e) => {
   finally { btn.disabled = false; btn.textContent = "Criar categoria"; }
 });
 
-/* ---------- CONFIG SERVIDOR ---------- */
+/* CONFIG SERVIDOR */
 function openServerSettings() {
   if (!currentServer) return;
   const isOwner = currentServer.ownerId === currentUser.uid;
@@ -281,11 +281,10 @@ function openServerSettings() {
   renderRolesList();
   renderMembersList();
   serverSettingsBackdrop.classList.remove("hidden");
-  // Default tab
   document.querySelectorAll(".modal-tab").forEach(t => t.classList.remove("active"));
-  document.querySelector(".modal-tab[data-tab=geral]").classList.add("active");
+  document.querySelector('.modal-tab[data-tab="geral"]').classList.add("active");
   document.querySelectorAll(".modal-tab-panel").forEach(p => p.classList.add("hidden"));
-  document.querySelector("[data-panel=geral]").classList.remove("hidden");
+  document.querySelector('[data-panel="geral"]').classList.remove("hidden");
 }
 btnServerSettings.addEventListener("click", openServerSettings);
 serverSettingsClose.addEventListener("click", () => serverSettingsBackdrop.classList.add("hidden"));
@@ -293,10 +292,11 @@ serverSettingsBackdrop.addEventListener("click", (e) => { if (e.target === serve
 
 document.querySelectorAll(".modal-tab").forEach(tab => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll(".modal-tab").forEach(t => t.classList.remove("active"));
+    const parent = tab.closest(".modal");
+    parent.querySelectorAll(".modal-tab").forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
-    document.querySelectorAll(".modal-tab-panel").forEach(p => p.classList.add("hidden"));
-    document.querySelector(`[data-panel="${tab.dataset.tab}"]`)?.classList.remove("hidden");
+    parent.querySelectorAll(".modal-tab-panel").forEach(p => p.classList.add("hidden"));
+    parent.querySelector(`[data-panel="${tab.dataset.tab}"]`)?.classList.remove("hidden");
   });
 });
 
@@ -344,12 +344,11 @@ btnDeleteServer.addEventListener("click", async () => {
   } catch (err) { toast("Erro: " + err.message, "error"); }
 });
 
-/* ---------- SERVER PROFILE (não-dono) ---------- */
+/* SERVER PROFILE (não-dono) */
 async function openServerProfile() {
   if (!currentServer) return;
   const isOwner = currentServer.ownerId === currentUser.uid;
   if (isOwner) { openServerSettings(); return; }
-
   serverProfileBackdrop.classList.remove("hidden");
   const banner = currentServer.banner || "";
   const icon = currentServer.icon || "";
@@ -358,9 +357,9 @@ async function openServerProfile() {
   $("sp-name").textContent = currentServer.name || "—";
   $("sp-desc").textContent = currentServer.description || "";
   $("sp-bio").textContent = currentServer.bio || "Sem descrição longa.";
-
-  // Carrega perfil por servidor
-  const snap = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js").then(m => m.get(m.ref((await import("./firebase.js")).rtdb, `servers/${currentServer.id}/members/${currentUser.uid}`)));
+  const { ref, get } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
+  const { rtdb } = await import("./firebase.js");
+  const snap = await get(ref(rtdb, `servers/${currentServer.id}/members/${currentUser.uid}`));
   const member = snap.exists() ? snap.val() : {};
   $("sp-nick").value = member.nickname || "";
   $("sp-avatar").value = member.avatar || "";
@@ -377,22 +376,16 @@ $("sp-save").addEventListener("click", async () => {
   } catch (err) { toast("Erro: " + err.message, "error"); }
 });
 
-/* ---------- ROLES ---------- */
+/* ROLES */
 function renderRolesList() {
   if (!currentServer) return;
   rolesList.innerHTML = currentRoles.map(r => {
     const permCount = r.permissions ? Object.keys(r.permissions).length : 0;
-    return `
-      <div class="role-card" data-role="${r.id}" style="border-left-color:${escapeHTML(r.color || "#8b5cf6")}">
-        <div class="role-dot" style="background:${escapeHTML(r.color || "#8b5cf6")}"></div>
-        <div class="role-info">
-          <strong>${escapeHTML(r.name)}</strong>
-          <small>${permCount} permiss${permCount === 1 ? "ão" : "ões"}</small>
-        </div>
-      </div>
-    `;
+    return `<div class="role-card" data-role="${r.id}" style="border-left-color:${escapeHTML(r.color || "#8b5cf6")}">
+      <div class="role-dot" style="background:${escapeHTML(r.color || "#8b5cf6")}"></div>
+      <div class="role-info"><strong>${escapeHTML(r.name)}</strong><small>${permCount} permiss${permCount === 1 ? "ão" : "ões"}</small></div>
+    </div>`;
   }).join("") || `<p class="empty-channels">Nenhum cargo ainda</p>`;
-
   rolesList.querySelectorAll("[data-role]").forEach(card => {
     card.addEventListener("click", () => openRoleEditor(card.dataset.role));
   });
@@ -406,13 +399,10 @@ function openRoleEditor(roleId = null) {
   roleColor.value = role?.color || "#8b5cf6";
   roleDelete.classList.toggle("hidden", !role || role.id === "owner");
   roleSubmit.textContent = role ? "Salvar" : "Criar cargo";
-
-  // Render perms
   rolePerms.innerHTML = PERMISSIONS.map(p => {
     const checked = role?.permissions?.[p.id] ? "checked" : "";
     return `<label class="perm-item"><input type="checkbox" data-perm="${p.id}" ${checked} /><span>${p.label}</span></label>`;
   }).join("");
-
   roleBackdrop.classList.remove("hidden");
 }
 roleClose.addEventListener("click", () => roleBackdrop.classList.add("hidden"));
@@ -425,17 +415,12 @@ formRole.addEventListener("submit", async (e) => {
   const name = roleName.value.trim();
   if (!name) return;
   const permissions = {};
-  rolePerms.querySelectorAll("[data-perm]").forEach(cb => {
-    if (cb.checked) permissions[cb.dataset.perm] = true;
-  });
+  rolePerms.querySelectorAll("[data-perm]").forEach(cb => { if (cb.checked) permissions[cb.dataset.perm] = true; });
   const btn = formRole.querySelector("button[type=submit]");
   btn.disabled = true; btn.textContent = "Salvando...";
   try {
-    if (editingRoleId) {
-      await updateRole(currentServer.id, editingRoleId, { name, color: roleColor.value, permissions });
-    } else {
-      await createRole(currentServer.id, { name, color: roleColor.value, permissions });
-    }
+    if (editingRoleId) await updateRole(currentServer.id, editingRoleId, { name, color: roleColor.value, permissions });
+    else await createRole(currentServer.id, { name, color: roleColor.value, permissions });
     roleBackdrop.classList.add("hidden");
     toast(editingRoleId ? "Cargo atualizado!" : "Cargo criado!", "success");
   } catch (err) { toast("Erro: " + err.message, "error"); }
@@ -452,31 +437,23 @@ roleDelete.addEventListener("click", async () => {
   } catch (err) { toast("Erro: " + err.message, "error"); }
 });
 
-/* ---------- MEMBERS ---------- */
+/* MEMBERS */
 function renderMembersList() {
   if (!currentServer) return;
   const isOwner = currentServer.ownerId === currentUser.uid;
   membersList.innerHTML = currentMembers.map(m => {
     const roleIds = m.roleIds ? Object.keys(m.roleIds) : [];
     const roleNames = roleIds.map(rid => currentRoles.find(r => r.id === rid)?.name).filter(Boolean).join(", ") || "Sem cargo";
-    return `
-      <div class="member-card" data-uid="${m.uid}">
-        <div class="avatar-sm">${m.avatar ? `<img src="${escapeHTML(m.avatar)}">` : escapeHTML((m.nickname || "U").charAt(0).toUpperCase())}</div>
-        <div class="member-info">
-          <strong>${escapeHTML(m.nickname || "Membro")}${m.uid === currentUser.uid ? " (você)" : ""}</strong>
-          <small>${escapeHTML(roleNames)}</small>
-        </div>
-        ${isOwner && m.uid !== currentUser.uid ? `
-          <div class="member-actions">
-            <button class="icon-btn" data-act="warn" title="Advertir"><svg class="icon"><use href="#i-bell"/></svg></button>
-            <button class="icon-btn" data-act="kick" title="Expulsar"><svg class="icon"><use href="#i-logout"/></svg></button>
-            <button class="icon-btn" data-act="ban" title="Banir"><svg class="icon"><use href="#i-lock"/></svg></button>
-          </div>
-        ` : ""}
-      </div>
-    `;
+    return `<div class="member-card" data-uid="${m.uid}">
+      <div class="avatar-sm">${m.avatar ? `<img src="${escapeHTML(m.avatar)}">` : escapeHTML((m.nickname || "U").charAt(0).toUpperCase())}</div>
+      <div class="member-info"><strong>${escapeHTML(m.nickname || "Membro")}${m.uid === currentUser.uid ? " (você)" : ""}</strong><small>${escapeHTML(roleNames)}</small></div>
+      ${isOwner && m.uid !== currentUser.uid ? `<div class="member-actions">
+        <button class="icon-btn" data-act="warn" title="Advertir"><svg class="icon"><use href="#i-bell"/></svg></button>
+        <button class="icon-btn" data-act="kick" title="Expulsar"><svg class="icon"><use href="#i-logout"/></svg></button>
+        <button class="icon-btn" data-act="ban" title="Banir"><svg class="icon"><use href="#i-lock"/></svg></button>
+      </div>` : ""}
+    </div>`;
   }).join("") || `<p class="empty-channels">Nenhum membro</p>`;
-
   membersList.querySelectorAll("[data-act]").forEach(btn => {
     btn.addEventListener("click", async () => {
       const uid = btn.closest("[data-uid]").dataset.uid;
@@ -502,7 +479,7 @@ function renderMembersList() {
   });
 }
 
-/* ---------- PERFIL DE USUÁRIO ---------- */
+/* PERFIL DE USUÁRIO */
 function renderAvatarHTML(p) {
   if (p?.avatar) return `<img src="${escapeHTML(p.avatar)}">`;
   return `<div class="profile-avatar-fallback">${escapeHTML((p?.displayName || "U").charAt(0).toUpperCase())}</div>`;
@@ -527,16 +504,13 @@ async function renderProfileView(profile, isMe) {
     : (theme.gradient?.enabled && theme.gradient.colorFrom && theme.gradient.colorTo
         ? `background: linear-gradient(${theme.gradient.direction === "to top" ? "to top" : "to bottom"}, ${theme.gradient.colorFrom}, ${theme.gradient.colorTo});`
         : `background: linear-gradient(to bottom, var(--purple), var(--blue));`);
-
   const links = profile.links || {};
   const linksHTML = Object.entries(links).map(([, l]) => {
     const icon = l.image ? `<img src="${escapeHTML(l.image)}" alt="">` : "";
     return `<a class="profile-link-btn" href="${escapeHTML(l.url)}" target="_blank" rel="noopener noreferrer">${icon}${escapeHTML(l.label)}</a>`;
   }).join("");
-
   const statusInfo = STATUS_LABELS[profile.status] || STATUS_LABELS.online;
   const tagsHTML = await getTagsHTML(profile.uid);
-
   return `
     <div class="profile-banner" style="${bannerStyle}">
       <button class="profile-close" id="profile-close-btn"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -556,8 +530,7 @@ async function renderProfileView(profile, isMe) {
       <div class="profile-actions">
         ${isMe ? `<button class="btn-primary" id="profile-edit-btn">Editar perfil</button>` : ""}
       </div>
-    </div>
-  `;
+    </div>`;
 }
 
 function openProfile(uid) {
@@ -580,7 +553,6 @@ function renderProfileEdit(profile) {
   const theme = profile.profileTheme || {};
   const g = theme.gradient || {};
   const links = profile.links || {};
-
   profileModal.innerHTML = `
     <div class="profile-banner" style="${buildProfileStyle(profile)}">
       <button class="profile-close" id="profile-close-btn"><svg class="icon"><use href="#i-close"/></svg></button>
@@ -610,9 +582,7 @@ function renderProfileEdit(profile) {
       <label><span>URL do ícone</span><input type="url" id="pf-link-image" /></label>
       <button type="button" class="btn-primary full" id="pf-add-link" style="margin-bottom:16px;">Adicionar link</button>
       <div class="profile-actions"><button class="btn-primary" id="pf-save">Salvar</button></div>
-    </div>
-  `;
-
+    </div>`;
   profileModal.querySelector("#profile-close-btn").addEventListener("click", () => profileBackdrop.classList.add("hidden"));
   profileModal.querySelector("#pf-add-link").addEventListener("click", async () => {
     const label = profileModal.querySelector("#pf-link-label").value.trim();
@@ -669,7 +639,7 @@ function renderProfileEdit(profile) {
 btnMyProfile.addEventListener("click", () => { if (currentUser) openProfile(currentUser.uid); });
 profileBackdrop.addEventListener("click", (e) => { if (e.target === profileBackdrop) profileBackdrop.classList.add("hidden"); });
 
-/* ---------- EMOJI ---------- */
+/* EMOJI */
 btnEmoji.addEventListener("click", (e) => {
   e.preventDefault();
   const isHidden = emojiPicker.classList.contains("hidden");
@@ -690,7 +660,7 @@ document.addEventListener("click", (e) => {
   }
 });
 
-/* ---------- IMAGEM ---------- */
+/* IMAGEM */
 btnImage.addEventListener("click", () => {
   const url = prompt("URL da imagem (aceita .gif):");
   if (!url) return;
@@ -698,7 +668,7 @@ btnImage.addEventListener("click", () => {
   sendImageMessage(currentServer.id, currentChannel.id, url).catch(err => toast("Erro: " + err.message, "error"));
 });
 
-/* ---------- SERVIDOR ---------- */
+/* SERVIDOR / CANAIS */
 function resetServerPanel() {
   currentServer = null; currentChannel = null;
   serverBanner.style.backgroundImage = "";
@@ -718,7 +688,7 @@ function makeChannelEl(ch, server) {
   const iconId = ch.type === "voice" ? "i-volume" : "i-hash";
   el.innerHTML = `<svg class="icon"><use href="#${iconId}"/></svg>${escapeHTML(ch.name)}`;
   el.addEventListener("click", () => {
-    if (ch.type === "voice") enterCallUI(server.id, server.name, ch);
+    if (ch.type === "voice") enterCall(server.id, server.name, ch);
     else selectChannel(server, ch);
   });
   return el;
@@ -731,9 +701,7 @@ function renderChannels() {
   const voiceCh = currentChannels.filter(c => c.type === "voice");
   const noCatText = textCh.filter(c => !c.categoryId);
   const noCatVoice = voiceCh.filter(c => !c.categoryId);
-
   let html = "";
-
   if (noCatText.length) {
     html += `<div class="channels-group"><div class="channels-group-head"><h3>Canais de texto</h3><button class="icon-btn xs" data-create="text"><svg class="icon"><use href="#i-plus"/></svg></button></div><div data-list="text-nocat"></div></div>`;
   }
@@ -748,12 +716,8 @@ function renderChannels() {
   if (isOwner) {
     html += `<div style="padding:12px 8px;"><button class="icon-btn xs" id="btn-add-category" style="width:100%;height:auto;padding:8px;gap:6px;display:flex;justify-content:center;color:var(--text-2);font-size:12px;"><svg class="icon"><use href="#i-plus"/></svg> Nova categoria</button></div>`;
   }
-  if (!currentChannels.length) {
-    html = `<div class="empty-channels" style="padding:16px 12px">Nenhum canal ainda</div>` + html;
-  }
-
+  if (!currentChannels.length) html = `<div class="empty-channels" style="padding:16px 12px">Nenhum canal ainda</div>` + html;
   channelsSection.innerHTML = html;
-
   const t = channelsSection.querySelector('[data-list="text-nocat"]');
   if (t) noCatText.forEach(ch => t.appendChild(makeChannelEl(ch, currentServer)));
   const v = channelsSection.querySelector('[data-list="voice-nocat"]');
@@ -762,7 +726,6 @@ function renderChannels() {
     const list = channelsSection.querySelector(`[data-list="cat-${cat.id}"]`);
     if (list) currentChannels.filter(c => c.categoryId === cat.id).forEach(ch => list.appendChild(makeChannelEl(ch, currentServer)));
   });
-
   channelsSection.querySelectorAll("[data-create]").forEach(btn => btn.addEventListener("click", () => openCreateChannelModal(btn.dataset.create)));
   channelsSection.querySelectorAll("[data-del-cat]").forEach(btn => btn.addEventListener("click", async () => {
     if (!confirm("Excluir categoria?")) return;
@@ -776,24 +739,20 @@ function renderChannels() {
 async function selectServer(server) {
   currentServer = server;
   currentChannel = null;
-
   serverName.textContent = server.name;
   serverSub.textContent = server.description || "Servidor";
   serverBanner.style.backgroundImage = server.banner ? `url('${server.banner}')` : "";
   serverTagRow.innerHTML = server.tag ? `<span class="server-tag-chip">${server.tagIcon ? (server.tagIcon.startsWith("http") ? `<img src="${escapeHTML(server.tagIcon)}">` : escapeHTML(server.tagIcon)) : ""}${escapeHTML(server.tag)}</span>` : "";
-
   chatTitle.textContent = "—";
   chatSubtitle.textContent = "Escolha um canal";
   chatInput.disabled = true;
   chatInput.value = "";
   chatMessages.innerHTML = `<div class="chat-empty"><div class="chat-empty-icon">#</div><p>${escapeHTML(server.name)}</p><small>Escolha um canal à esquerda</small></div>`;
-
   if (unsubChannels) unsubChannels();
   if (unsubCategories) unsubCategories();
   if (unsubRoles) unsubRoles();
   if (unsubMembers) unsubMembers();
   if (unsubMessages) unsubMessages();
-
   unsubChannels = listenChannels(server.id, (channels) => {
     currentChannels = channels;
     renderChannels();
@@ -817,7 +776,6 @@ function selectChannel(server, channel) {
   chatInput.focus();
   chatMessages.innerHTML = `<div class="chat-empty"><small>Carregando mensagens...</small></div>`;
   appBody.classList.remove("sidebar-open");
-
   if (unsubMessages) unsubMessages();
   unsubMessages = listenMessages(server.id, channel.id, (msgs) => {
     if (!msgs.length) {
@@ -837,11 +795,9 @@ function renderMessage(m) {
   const avatarInner = m.authorAvatar ? `<img src="${escapeHTML(m.authorAvatar)}">` : initial;
   let time = "";
   if (m.createdAt) time = new Date(m.createdAt).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-
   const contentHTML = m.imageUrl
     ? `<img class="msg-image" src="${escapeHTML(m.imageUrl)}" onclick="window.open('${escapeHTML(m.imageUrl)}','_blank')">`
     : `<div class="msg-text">${escapeHTML(m.content || "")}</div>`;
-
   el.innerHTML = `
     <div class="avatar" data-uid="${m.authorId}" style="cursor:pointer">${avatarInner}</div>
     <div class="msg-body">
@@ -866,12 +822,7 @@ chatForm.addEventListener("submit", async (e) => {
   catch (err) { toast("Erro: " + err.message, "error"); }
 });
 
-/* ---------- CALL UI (chat + vídeo) ---------- */
-async function enterCallUI(serverId, serverName, channel) {
-  enterCall(serverId, serverName, channel);
-}
-
-/* ---------- MAILBOX ---------- */
+/* MAILBOX */
 const CURRENT_VERSION = "0.5.0";
 const UPDATE_LOG = [
   { v: "0.5.0", title: "Sistema de cargos e membros", body: "Agora você pode criar cargos, gerenciar permissões, advertir, expulsar e banir membros." },
@@ -890,63 +841,39 @@ async function checkForUpdates() {
   if (unread.length) {
     const u = {};
     unread.forEach(up => {
-      u[`mailbox/${currentUser.uid}/updates/${up.v}`] = {
-        title: up.title, body: up.body, v: up.v,
-        createdAt: Date.now(), read: false
-      };
+      u[`mailbox/${currentUser.uid}/updates/${up.v}`] = { title: up.title, body: up.body, v: up.v, createdAt: Date.now(), read: false };
     });
     await rtUpdate(ref(rtdb), u);
   }
 }
-btnMailbox.addEventListener("click", async () => {
-  mailboxBackdrop.classList.remove("hidden");
-  await renderMailbox();
-});
+btnMailbox.addEventListener("click", async () => { mailboxBackdrop.classList.remove("hidden"); await renderMailbox(); });
 mailboxClose.addEventListener("click", () => mailboxBackdrop.classList.add("hidden"));
 mailboxBackdrop.addEventListener("click", (e) => { if (e.target === mailboxBackdrop) mailboxBackdrop.classList.add("hidden"); });
 
-document.querySelectorAll('[data-mtab]').forEach(tab => {
+document.querySelectorAll("[data-mtab]").forEach(tab => {
   tab.addEventListener("click", () => {
-    document.querySelectorAll('[data-mtab]').forEach(t => t.classList.remove("active"));
+    const parent = tab.closest(".modal");
+    parent.querySelectorAll("[data-mtab]").forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
-    document.querySelectorAll('[data-mpanel]').forEach(p => p.classList.add("hidden"));
-    document.querySelector(`[data-mpanel="${tab.dataset.mtab}"]`).classList.remove("hidden");
+    parent.querySelectorAll("[data-mpanel]").forEach(p => p.classList.add("hidden"));
+    parent.querySelector(`[data-mpanel="${tab.dataset.mtab}"]`).classList.remove("hidden");
   });
 });
 
 async function renderMailbox() {
   const { ref, get, update: rtUpdate } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js");
   const { rtdb } = await import("./firebase.js");
-
   const updatesSnap = await get(ref(rtdb, `mailbox/${currentUser.uid}/updates`));
   const updates = updatesSnap.exists() ? updatesSnap.val() : {};
-  const updList = Object.entries(updates).sort((a,b) => (b[1].createdAt||0)-(a[1].createdAt||0));
-  mailboxUpdates.innerHTML = updList.map(([id, u]) => `
-    <div class="mail-item ${u.read ? "" : "unread"}">
-      <h4>v${escapeHTML(u.v)} — ${escapeHTML(u.title)}</h4>
-      <p>${escapeHTML(u.body)}</p>
-      <small>${new Date(u.createdAt).toLocaleString("pt-BR")}</small>
-    </div>
-  `).join("") || `<p class="empty-channels">Sem atualizações</p>`;
-
-  // Marca como lidas
+  const updList = Object.entries(updates).sort((a, b) => (b[1].createdAt || 0) - (a[1].createdAt || 0));
+  mailboxUpdates.innerHTML = updList.map(([, u]) => `<div class="mail-item ${u.read ? "" : "unread"}"><h4>v${escapeHTML(u.v)} — ${escapeHTML(u.title)}</h4><p>${escapeHTML(u.body)}</p><small>${new Date(u.createdAt).toLocaleString("pt-BR")}</small></div>`).join("") || `<p class="empty-channels">Sem atualizações</p>`;
   const mark = {};
   Object.keys(updates).forEach(v => { mark[`mailbox/${currentUser.uid}/updates/${v}/read`] = true; mark[`mailbox/${currentUser.uid}/readUpdates/${v}`] = true; });
   if (Object.keys(mark).length) await rtUpdate(ref(rtdb), mark).catch(() => {});
 
   const invSnap = await get(ref(rtdb, `mailbox/${currentUser.uid}/invites`));
   const invites = invSnap.exists() ? invSnap.val() : {};
-  mailboxInvites.innerHTML = Object.entries(invites).map(([id, inv]) => `
-    <div class="mail-item">
-      <h4>Convite para ${escapeHTML(inv.serverName || "servidor")}</h4>
-      <p>Você foi convidado por <strong>${escapeHTML(inv.fromName || "alguém")}</strong>.</p>
-      <div class="mail-actions">
-        <button class="accept" data-accept="${id}">Aceitar</button>
-        <button class="decline" data-decline="${id}">Recusar</button>
-      </div>
-    </div>
-  `).join("") || `<p class="empty-channels">Sem convites</p>`;
-
+  mailboxInvites.innerHTML = Object.entries(invites).map(([id, inv]) => `<div class="mail-item"><h4>Convite para ${escapeHTML(inv.serverName || "servidor")}</h4><p>Você foi convidado por <strong>${escapeHTML(inv.fromName || "alguém")}</strong>.</p><div class="mail-actions"><button class="accept" data-accept="${id}">Aceitar</button><button class="decline" data-decline="${id}">Recusar</button></div></div>`).join("") || `<p class="empty-channels">Sem convites</p>`;
   mailboxInvites.querySelectorAll("[data-accept]").forEach(b => b.addEventListener("click", async () => {
     const id = b.dataset.accept;
     const inv = invites[id];
@@ -962,7 +889,6 @@ async function renderMailbox() {
     await rtUpdate(ref(rtdb), { [`mailbox/${currentUser.uid}/invites/${b.dataset.decline}`]: null });
     renderMailbox();
   }));
-
   updateMailboxBadge();
 }
 
@@ -974,15 +900,13 @@ async function updateMailboxBadge() {
   const invites = snap.exists() ? Object.keys(snap.val()).length : 0;
   const updatesSnap = await get(ref(rtdb, `mailbox/${currentUser.uid}/updates`));
   let updatesUnread = 0;
-  if (updatesSnap.exists()) {
-    for (const u of Object.values(updatesSnap.val())) if (!u.read) updatesUnread++;
-  }
+  if (updatesSnap.exists()) for (const u of Object.values(updatesSnap.val())) if (!u.read) updatesUnread++;
   const total = invites + updatesUnread;
   if (total > 0) { mailboxBadge.textContent = total; mailboxBadge.classList.remove("hidden"); }
   else mailboxBadge.classList.add("hidden");
 }
 
-/* ---------- START ---------- */
+/* START */
 function startApp() {
   loginScreen.classList.add("hidden");
   app.classList.remove("hidden");
