@@ -40,6 +40,8 @@
   <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
   <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
   <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+  <symbol id="i-user-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></symbol>
 </svg>
 
 <section id="login-screen" class="login-screen">
@@ -85,9 +87,7 @@
       <div class="server-banner-wrap" id="server-banner-wrap">
         <div class="server-banner" id="server-banner"></div>
         <div class="server-banner-overlay"></div>
-        <button class="server-banner-settings" id="btn-server-settings" title="Configurações">
-          <svg class="icon"><use href="#i-settings"/></svg>
-        </button>
+        <button class="server-banner-settings" id="btn-server-settings" title="Configurações"><svg class="icon"><use href="#i-settings"/></svg></button>
       </div>
       <div class="server-info">
         <h2 id="server-name">Selecione um servidor</h2>
@@ -124,10 +124,13 @@
     </main>
 
     <aside class="friends-panel">
-      <h3>AMIGOS</h3>
-      <div class="friend"><div class="dot online"></div><div><strong>Lukzinn</strong><small>Jogando Free Fire</small></div></div>
-      <div class="friend"><div class="dot online"></div><div><strong>zNeto</strong></div></div>
-      <div class="friend"><div class="dot online"></div><div><strong>Mimi</strong></div></div>
+      <div class="friends-head">
+        <h3>AMIGOS</h3>
+        <button class="icon-btn xs" id="btn-add-friend" title="Adicionar amigo"><svg class="icon"><use href="#i-user-plus"/></svg></button>
+      </div>
+      <div class="friends-list" id="friends-list">
+        <div class="empty-channels" style="padding:12px;">Carregando...</div>
+      </div>
     </aside>
   </div>
 </div>
@@ -171,7 +174,7 @@
   </div>
 </div>
 
-<!-- Modal config servidor (dono) -->
+<!-- Modal config servidor -->
 <div class="modal-backdrop hidden" id="server-settings-backdrop">
   <div class="modal modal-tall">
     <div class="modal-head"><h3>Configurações do servidor</h3><button class="icon-btn" id="server-settings-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
@@ -180,8 +183,6 @@
       <button class="modal-tab" data-tab="cargos">Cargos</button>
       <button class="modal-tab" data-tab="membros">Membros</button>
     </div>
-
-    <!-- TAB GERAL -->
     <div class="modal-tab-panel" data-panel="geral">
       <form id="form-server-settings">
         <label><span>Nome</span><input type="text" id="ss-name" maxlength="40" required /></label>
@@ -196,14 +197,10 @@
         <button type="button" class="btn-danger full" id="btn-delete-server">Excluir servidor</button>
       </form>
     </div>
-
-    <!-- TAB CARGOS -->
     <div class="modal-tab-panel hidden" data-panel="cargos">
       <div id="roles-list"></div>
       <button class="btn-primary full" id="btn-new-role" style="margin-top:12px;">+ Criar cargo</button>
     </div>
-
-    <!-- TAB MEMBROS -->
     <div class="modal-tab-panel hidden" data-panel="membros">
       <div id="members-list"></div>
     </div>
@@ -213,7 +210,7 @@
 <!-- Modal perfil do servidor (não-dono) -->
 <div class="modal-backdrop hidden" id="server-profile-backdrop">
   <div class="modal">
-    <div class="modal-head"><h3 id="sp-title">Sobre o servidor</h3><button class="icon-btn" id="server-profile-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="modal-head"><h3>Sobre o servidor</h3><button class="icon-btn" id="server-profile-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <div class="server-profile-banner" id="sp-banner"></div>
     <div class="server-profile-body">
       <div class="server-profile-icon" id="sp-icon"></div>
@@ -249,12 +246,12 @@
   <div class="call-modal" id="call-modal"></div>
 </div>
 
-<!-- Modal perfil de usuário -->
+<!-- Modal perfil usuário -->
 <div class="modal-backdrop hidden" id="profile-backdrop">
   <div class="profile-modal" id="profile-modal"></div>
 </div>
 
-<!-- Modal caixa de entrada -->
+<!-- Modal mailbox -->
 <div class="modal-backdrop hidden" id="mailbox-backdrop">
   <div class="modal modal-tall">
     <div class="modal-head"><h3>Caixa de entrada</h3><button class="icon-btn" id="mailbox-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
@@ -264,6 +261,17 @@
     </div>
     <div class="modal-tab-panel" data-mpanel="updates"><div id="mailbox-updates" class="mailbox-list"></div></div>
     <div class="modal-tab-panel hidden" data-mpanel="invites"><div id="mailbox-invites" class="mailbox-list"></div></div>
+  </div>
+</div>
+
+<!-- Modal adicionar amigo -->
+<div class="modal-backdrop hidden" id="friend-add-backdrop">
+  <div class="modal">
+    <div class="modal-head"><h3>Adicionar amigo</h3><button class="icon-btn" id="friend-add-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <form id="form-add-friend">
+      <label><span>Digite o @username</span><input type="text" id="friend-username-input" required maxlength="24" placeholder="arthur1234" /></label>
+      <button type="submit" class="btn-primary full">Enviar pedido</button>
+    </form>
   </div>
 </div>
 
