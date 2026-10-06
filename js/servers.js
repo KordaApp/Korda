@@ -1,6 +1,6 @@
 import { rtdb } from "./firebase.js";
 import {
-  ref, set, get, push, update, onValue
+  ref, set, get, push, onValue
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 export async function createServer(uid, name, description = "") {
@@ -9,7 +9,6 @@ export async function createServer(uid, name, description = "") {
   const channelId = push(ref(rtdb, `servers/${serverId}/channels`)).key;
   const now = Date.now();
 
-  // Executa todas as escritas em paralelo — cada uma escreve numa folha diferente
   await Promise.all([
     set(ref(rtdb, `servers/${serverId}/name`), name),
     set(ref(rtdb, `servers/${serverId}/description`), description || "Servidor de comunidade"),
@@ -17,15 +16,12 @@ export async function createServer(uid, name, description = "") {
     set(ref(rtdb, `servers/${serverId}/ownerId`), uid),
     set(ref(rtdb, `servers/${serverId}/memberCount`), 1),
     set(ref(rtdb, `servers/${serverId}/createdAt`), now),
-
     set(ref(rtdb, `servers/${serverId}/members/${uid}/joinedAt`), now),
     set(ref(rtdb, `servers/${serverId}/members/${uid}/role`), "owner"),
-
     set(ref(rtdb, `servers/${serverId}/channels/${channelId}/name`), "geral"),
     set(ref(rtdb, `servers/${serverId}/channels/${channelId}/type`), "text"),
     set(ref(rtdb, `servers/${serverId}/channels/${channelId}/position`), 0),
     set(ref(rtdb, `servers/${serverId}/channels/${channelId}/createdAt`), now),
-
     set(ref(rtdb, `serverList/${uid}/${serverId}/name`), name),
     set(ref(rtdb, `serverList/${uid}/${serverId}/icon`), ""),
     set(ref(rtdb, `serverList/${uid}/${serverId}/addedAt`), now)
@@ -76,9 +72,7 @@ export async function createChannel(serverId, name, type = "text") {
 }
 
 export async function addServerToUserIndex(uid, serverId, serverName, serverIcon = "") {
-  await set(ref(rtdb, `serverList/${uid}/${serverId}`), {
-    name: serverName,
-    icon: serverIcon,
-    addedAt: Date.now()
-  });
+  await set(ref(rtdb, `serverList/${uid}/${serverId}/name`), serverName);
+  await set(ref(rtdb, `serverList/${uid}/${serverId}/icon`), serverIcon);
+  await set(ref(rtdb, `serverList/${uid}/${serverId}/addedAt`), Date.now());
 }
