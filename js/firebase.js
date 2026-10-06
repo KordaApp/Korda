@@ -10,12 +10,9 @@ const firebaseConfig = {
   storageBucket: "korda-app.firebasestorage.app",
   messagingSenderId: "312645222520",
   appId: "1:312645222520:web:dfc60b8fcd4efed3782d8d"
-  // databaseURL: "https://korda-app-default-rtdb.firebaseio.com" ← cola aqui depois
 };
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-
-console.log("KORDA conectado ✅");
