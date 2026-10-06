@@ -1,63 +1,211 @@
-.app-grid {
-  display: grid;
-  grid-template-columns: 72px 240px 1fr 260px;
-  height: 100dvh;
-}
+/* ========================
+   LAYOUT GERAL
+   ======================== */
 
-/* Barra de servidores */
-.servers-rail {
-  background: var(--bg-0);
+.app {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 0;
-  border-right: 1px solid var(--border);
+  height: 100dvh;
+  overflow: hidden;
 }
 
-.server-logo {
-  width: 48px; height: 48px;
-  border-radius: 50%;
+/* ========================
+   TOPBAR
+   ======================== */
+
+.topbar {
+  height: 68px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  background: var(--bg-0);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  z-index: 10;
+  flex-shrink: 0;
+}
+
+.topbar-logo {
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
   background: linear-gradient(135deg, var(--purple), var(--blue));
-  display: grid; place-items: center;
-  font-weight: 800; font-size: 20px;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  font-size: 20px;
+  color: white;
   box-shadow: var(--shadow-glow);
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: transform var(--transition);
+}
+
+.topbar-logo:hover {
+  transform: scale(1.05) rotate(-3deg);
+}
+
+/* ========================
+   CARROSSEL DE SERVIDORES
+   ======================== */
+
+.servers-carousel {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-y;
+}
+
+.servers-carousel.dragging {
+  cursor: grabbing;
+}
+
+.servers-track {
+  display: flex;
+  gap: 10px;
+  padding: 0 20px;
+  will-change: transform;
+  pointer-events: auto;
 }
 
 .server-item {
-  width: 48px; height: 48px;
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
   border-radius: 50%;
   background: var(--bg-2);
-  display: grid; place-items: center;
+  display: grid;
+  place-items: center;
   font-weight: 700;
-  cursor: pointer;
-  transition: var(--transition);
+  font-size: 13px;
   color: var(--text-1);
+  cursor: pointer;
+  transition: background var(--transition), border-radius var(--transition), transform var(--transition);
+  position: relative;
+  overflow: hidden;
 }
 
-.server-item:hover,
+.server-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+}
+
+.server-item:hover {
+  background: var(--bg-3);
+  color: var(--text-0);
+  transform: translateY(-2px);
+}
+
 .server-item.active {
   background: linear-gradient(135deg, var(--purple), var(--blue));
   color: white;
   border-radius: 16px;
+  box-shadow: var(--shadow-glow);
 }
 
-.server-add {
-  width: 48px; height: 48px;
+/* Indicador de notificação (não lidas) */
+.server-item.has-notif::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
+  background: var(--red);
+  border: 2px solid var(--bg-0);
+}
+
+/* Fade nas bordas pra dar sensação de continuidade */
+.carousel-fade-left,
+.carousel-fade-right {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.carousel-fade-left {
+  left: 0;
+  background: linear-gradient(to right, var(--bg-0) 0%, transparent 100%);
+}
+
+.carousel-fade-right {
+  right: 0;
+  background: linear-gradient(to left, var(--bg-0) 0%, transparent 100%);
+}
+
+/* ========================
+   AÇÕES DA TOPBAR
+   ======================== */
+
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.topbar-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
   background: var(--bg-2);
-  color: var(--green);
-  font-size: 24px;
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  color: var(--text-1);
   transition: var(--transition);
 }
 
-.server-add:hover {
-  background: var(--green);
-  color: white;
-  border-radius: 16px;
+.topbar-btn:hover {
+  background: var(--bg-3);
+  color: var(--text-0);
 }
 
-/* Painel de canais */
+.topbar-btn#btn-add-server {
+  color: var(--green);
+  font-size: 22px;
+  font-weight: 300;
+}
+
+.topbar-btn#btn-add-server:hover {
+  background: var(--green);
+  color: white;
+}
+
+.user-chip {
+  background: linear-gradient(135deg, var(--purple), var(--blue));
+  color: white;
+  font-weight: 700;
+}
+
+.user-chip.hidden { display: none; }
+
+/* ========================
+   CORPO (3 COLUNAS)
+   ======================== */
+
+.app-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 240px 1fr 260px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* -------- Canais -------- */
 .channels-panel {
   background: var(--bg-1);
   overflow-y: auto;
@@ -70,19 +218,10 @@
   border-bottom: 1px solid var(--border);
   margin-bottom: 12px;
 }
-
-.server-header h2 {
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.server-header span {
-  font-size: 12px;
-  color: var(--text-2);
-}
+.server-header h2 { font-size: 16px; font-weight: 700; }
+.server-header span { font-size: 12px; color: var(--text-2); }
 
 .channels-section { margin-bottom: 16px; }
-
 .channels-section h3 {
   font-size: 11px;
   color: var(--text-2);
@@ -100,24 +239,22 @@
   transition: var(--transition);
   margin-bottom: 2px;
 }
-
 .channel:hover { background: var(--bg-2); color: var(--text-0); }
 .channel.active { background: var(--purple-soft); color: var(--purple-glow); }
 
-/* Chat */
+/* -------- Chat -------- */
 .chat-area {
   background: var(--bg-1);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  min-height: 0;
 }
 
 .chat-header {
   padding: 16px 20px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg-1);
 }
-
 .chat-header h2 { font-size: 16px; }
 .chat-header p { font-size: 12px; color: var(--text-2); margin-top: 2px; }
 
@@ -130,11 +267,7 @@
   gap: 16px;
 }
 
-.message {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
+.message { display: flex; gap: 12px; align-items: flex-start; }
 
 .avatar {
   width: 40px; height: 40px;
@@ -145,22 +278,11 @@
   flex-shrink: 0;
 }
 
-.msg-head {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
-}
-
+.msg-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
 .msg-head strong { font-size: 14px; }
 .msg-head .time { font-size: 11px; color: var(--text-2); }
 .msg-text { color: var(--text-1); font-size: 14px; line-height: 1.5; }
-
-.reactions {
-  margin-top: 6px;
-  font-size: 12px;
-  color: var(--text-2);
-}
+.reactions { margin-top: 6px; font-size: 12px; color: var(--text-2); }
 
 .chat-input {
   display: flex;
@@ -170,7 +292,6 @@
   background: var(--bg-2);
   border-top: 1px solid var(--border);
 }
-
 .chat-input input {
   flex: 1;
   background: var(--bg-3);
@@ -182,7 +303,6 @@
   outline: none;
   transition: var(--transition);
 }
-
 .chat-input input:focus { box-shadow: 0 0 0 2px var(--purple); }
 
 .plus, .emoji {
@@ -194,24 +314,21 @@
   color: var(--purple-glow);
   transition: var(--transition);
 }
-
 .plus:hover, .emoji:hover { background: var(--purple); color: white; }
 
-/* Amigos */
+/* -------- Amigos -------- */
 .friends-panel {
   background: var(--bg-1);
   padding: 16px 12px;
   overflow-y: auto;
   border-left: 1px solid var(--border);
 }
-
 .friends-panel h3 {
   font-size: 11px;
   color: var(--text-2);
   letter-spacing: 0.5px;
   margin-bottom: 12px;
 }
-
 .friend {
   display: flex;
   align-items: center;
@@ -221,23 +338,28 @@
   transition: var(--transition);
   cursor: pointer;
 }
-
 .friend:hover { background: var(--bg-2); }
-
 .friend strong { font-size: 14px; display: block; }
 .friend small { font-size: 11px; color: var(--text-2); }
 
-.dot {
-  width: 10px; height: 10px;
-  border-radius: 50%;
-  flex-shrink: 0;
-}
-
+.dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
 .dot.online { background: var(--green); box-shadow: 0 0 8px var(--green); }
 
-/* Mobile */
+/* ========================
+   MOBILE
+   ======================== */
+
 @media (max-width: 900px) {
-  .app-grid { grid-template-columns: 60px 1fr; }
-  .friends-panel { display: none; }
-  .channels-panel { display: none; }
+  .topbar { height: 60px; padding: 0 10px; gap: 8px; }
+  .topbar-logo { width: 40px; height: 40px; border-radius: 12px; font-size: 18px; }
+  .server-item { width: 40px; height: 40px; font-size: 12px; }
+  .topbar-btn { width: 36px; height: 36px; }
+
+  .app-body {
+    grid-template-columns: 1fr;
   }
+  .channels-panel,
+  .friends-panel {
+    display: none;
+  }
+}
