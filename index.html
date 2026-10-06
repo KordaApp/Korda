@@ -23,6 +23,8 @@
   <symbol id="i-paperclip" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></symbol>
   <symbol id="i-google" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></symbol>
   <symbol id="i-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></symbol>
 </svg>
 
 <section id="login-screen" class="login-screen">
@@ -31,57 +33,34 @@
     <div class="login-logo">K</div>
     <h1 class="login-title">KORDA</h1>
     <p class="login-sub">Comunicação e comunidades, do jeito BR.</p>
-
     <button class="btn-google" id="btn-google">
       <svg class="icon"><use href="#i-google"/></svg>
       Continuar com Google
     </button>
-
     <div class="login-divider"><span>ou</span></div>
-
     <form class="login-form" id="login-form">
-      <label>
-        <span>Nome de usuário</span>
-        <input type="text" id="input-name" placeholder="Arthur" autocomplete="username" />
-      </label>
-      <label>
-        <span>E-mail</span>
-        <input type="email" id="input-email" placeholder="voce@email.com" autocomplete="email" required />
-      </label>
-      <label>
-        <span>Senha</span>
-        <input type="password" id="input-pass" placeholder="••••••••" autocomplete="current-password" required minlength="6" />
-      </label>
+      <label><span>Nome de usuário</span><input type="text" id="input-name" placeholder="Arthur" autocomplete="username" /></label>
+      <label><span>E-mail</span><input type="email" id="input-email" placeholder="voce@email.com" autocomplete="email" required /></label>
+      <label><span>Senha</span><input type="password" id="input-pass" placeholder="••••••••" autocomplete="current-password" required minlength="6" /></label>
       <button type="submit" class="btn-primary" id="btn-submit">Entrar</button>
     </form>
-
-    <p class="login-toggle">
-      <span id="toggle-text">Não tem conta?</span>
-      <button type="button" id="btn-toggle-mode">Criar conta</button>
-    </p>
-
+    <p class="login-toggle"><span id="toggle-text">Não tem conta?</span><button type="button" id="btn-toggle-mode">Criar conta</button></p>
     <p class="login-error" id="login-error"></p>
   </div>
 </section>
 
 <div class="app hidden" id="app">
   <header class="topbar">
-    <div class="topbar-logo" title="KORDA">K</div>
+    <div class="topbar-logo" id="btn-my-profile" title="Meu perfil">K</div>
     <div class="servers-carousel" id="servers-carousel">
       <div class="servers-track" id="servers-track"></div>
       <div class="carousel-fade left"></div>
       <div class="carousel-fade right"></div>
     </div>
     <div class="topbar-actions">
-      <button class="topbar-btn" id="btn-explore" title="Explorar">
-        <svg class="icon"><use href="#i-search"/></svg>
-      </button>
-      <button class="topbar-btn green" id="btn-add-server" title="Criar servidor">
-        <svg class="icon"><use href="#i-plus"/></svg>
-      </button>
-      <button class="topbar-btn" id="btn-logout" title="Sair">
-        <svg class="icon"><use href="#i-logout"/></svg>
-      </button>
+      <button class="topbar-btn" id="btn-explore" title="Explorar"><svg class="icon"><use href="#i-search"/></svg></button>
+      <button class="topbar-btn green" id="btn-add-server" title="Criar servidor"><svg class="icon"><use href="#i-plus"/></svg></button>
+      <button class="topbar-btn" id="btn-logout" title="Sair"><svg class="icon"><use href="#i-logout"/></svg></button>
     </div>
   </header>
 
@@ -105,7 +84,6 @@
         </div>
         <p id="chat-subtitle">Selecione um canal para começar</p>
       </div>
-
       <div class="chat-messages" id="chat-messages">
         <div class="chat-empty">
           <div class="chat-empty-icon">K</div>
@@ -113,59 +91,40 @@
           <small>Escolha um servidor, entre num canal e comece a conversar.</small>
         </div>
       </div>
-
       <form class="chat-input" id="chat-form">
-        <button type="button" class="icon-btn" title="Anexar">
-          <svg class="icon"><use href="#i-paperclip"/></svg>
-        </button>
+        <button type="button" class="icon-btn" title="Anexar"><svg class="icon"><use href="#i-paperclip"/></svg></button>
         <input type="text" id="chat-input" placeholder="Digite uma mensagem..." autocomplete="off" disabled />
-        <button type="button" class="icon-btn" title="Emoji">
-          <svg class="icon"><use href="#i-smile"/></svg>
-        </button>
-        <button type="submit" class="icon-btn primary" title="Enviar">
-          <svg class="icon"><use href="#i-send"/></svg>
-        </button>
+        <button type="button" class="icon-btn" id="btn-emoji" title="Emoji"><svg class="icon"><use href="#i-smile"/></svg></button>
+        <button type="submit" class="icon-btn primary" title="Enviar"><svg class="icon"><use href="#i-send"/></svg></button>
+        <div class="emoji-picker hidden" id="emoji-picker"></div>
       </form>
     </main>
 
     <aside class="friends-panel">
       <h3>AMIGOS</h3>
-      <div class="friend">
-        <div class="dot online"></div>
-        <div><strong>Lukzinn</strong><small>Jogando Free Fire</small></div>
-      </div>
-      <div class="friend">
-        <div class="dot online"></div>
-        <div><strong>zNeto</strong><small>Jogando CS2</small></div>
-      </div>
-      <div class="friend">
-        <div class="dot online"></div>
-        <div><strong>Mimi</strong><small>Ouvindo música</small></div>
-      </div>
+      <div class="friend"><div class="dot online"></div><div><strong>Lukzinn</strong><small>Jogando Free Fire</small></div></div>
+      <div class="friend"><div class="dot online"></div><div><strong>zNeto</strong></div></div>
+      <div class="friend"><div class="dot online"></div><div><strong>Mimi</strong></div></div>
     </aside>
   </div>
 </div>
 
 <div class="modal-backdrop hidden" id="modal-backdrop">
-  <div class="modal" id="modal-server">
+  <div class="modal">
     <div class="modal-head">
       <h3>Criar servidor</h3>
-      <button class="icon-btn" id="modal-close">
-        <svg class="icon"><use href="#i-close"/></svg>
-      </button>
+      <button class="icon-btn" id="modal-close"><svg class="icon"><use href="#i-close"/></svg></button>
     </div>
     <form id="form-create-server">
-      <label>
-        <span>Nome do servidor</span>
-        <input type="text" id="server-name-input" placeholder="Ex: KORDA BR" required maxlength="40" />
-      </label>
-      <label>
-        <span>Descrição (opcional)</span>
-        <input type="text" id="server-desc-input" placeholder="Servidor de comunidade" maxlength="80" />
-      </label>
+      <label><span>Nome do servidor</span><input type="text" id="server-name-input" placeholder="Ex: KORDA BR" required maxlength="40" /></label>
+      <label><span>Descrição (opcional)</span><input type="text" id="server-desc-input" placeholder="Servidor de comunidade" maxlength="80" /></label>
       <button type="submit" class="btn-primary full">Criar servidor</button>
     </form>
   </div>
+</div>
+
+<div class="modal-backdrop hidden" id="profile-backdrop">
+  <div class="profile-modal" id="profile-modal"></div>
 </div>
 
 <div class="toast-root" id="toast-root"></div>
