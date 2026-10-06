@@ -5,7 +5,7 @@ import {
   updateProfile, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
-  ref, get, set, serverTimestamp
+  ref, get, set
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const googleProvider = new GoogleAuthProvider();
