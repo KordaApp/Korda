@@ -1,10 +1,9 @@
 import { auth } from "./firebase.js";
 import { onAuth, loginGoogle, registerEmail, loginEmail, logout, traduzErro } from "./auth.js";
 import { initCarousel } from "./carousel.js";
-import { createServer, listenUserServers, addServerToUserIndex, listenChannels, createChannel } from "./servers.js";
+import { createServer, listenUserServers, listenChannels } from "./servers.js";
 import { listenMessages, sendMessage } from "./chat.js";
 
-// ---------- Elementos ----------
 const $ = (id) => document.getElementById(id);
 
 const loginScreen = $("login-screen");
@@ -42,8 +41,7 @@ const serverDescInput = $("server-desc-input");
 
 const toastRoot = $("toast-root");
 
-// ---------- Estado ----------
-let authMode = "login"; // ou "register"
+let authMode = "login";
 let currentUser = null;
 let servers = [];
 let currentServer = null;
@@ -52,7 +50,6 @@ let unsubServers = null;
 let unsubChannels = null;
 let unsubMessages = null;
 
-// ---------- Toasts ----------
 function toast(msg, type = "") {
   const el = document.createElement("div");
   el.className = `toast ${type}`;
@@ -65,7 +62,6 @@ function toast(msg, type = "") {
   }, 3500);
 }
 
-// ---------- Login form ----------
 btnToggleMode.addEventListener("click", () => {
   authMode = authMode === "login" ? "register" : "login";
   if (authMode === "register") {
@@ -84,7 +80,6 @@ btnToggleMode.addEventListener("click", () => {
   loginError.textContent = "";
 });
 
-// Esconde o campo nome por padrão
 inputName.parentElement.style.display = "none";
 
 btnGoogle.addEventListener("click", async () => {
@@ -120,13 +115,11 @@ loginForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ---------- Logout ----------
 btnLogout.addEventListener("click", async () => {
   await logout();
   toast("Você saiu da conta");
 });
 
-// ---------- Modal criar servidor ----------
 btnAddServer.addEventListener("click", () => {
   modalBackdrop.classList.remove("hidden");
   serverNameInput.focus();
@@ -147,8 +140,7 @@ formCreateServer.addEventListener("submit", async (e) => {
   submitBtn.textContent = "Criando...";
 
   try {
-    const { serverId } = await createServer(currentUser.uid, name, desc);
-    await addServerToUserIndex(currentUser.uid, serverId, name);
+    await createServer(currentUser.uid, name, desc);
     modalBackdrop.classList.add("hidden");
     formCreateServer.reset();
     toast("Servidor criado!", "success");
@@ -161,7 +153,6 @@ formCreateServer.addEventListener("submit", async (e) => {
   }
 });
 
-// ---------- Selecionar servidor ----------
 function selectServer(server) {
   currentServer = server;
   currentChannel = null;
@@ -169,7 +160,6 @@ function selectServer(server) {
   serverName.textContent = server.name;
   serverSub.textContent = server.description || "Servidor";
 
-  // Limpa chat
   chatTitle.textContent = "—";
   chatSubtitle.textContent = "Escolha um canal";
   chatInput.disabled = true;
@@ -181,11 +171,9 @@ function selectServer(server) {
       <small>Escolha um canal à esquerda para começar</small>
     </div>`;
 
-  // Limpa listeners antigos
   if (unsubChannels) unsubChannels();
   if (unsubMessages) unsubMessages();
 
-  // Escuta canais
   unsubChannels = listenChannels(server.id, (channels) => {
     channelsSection.innerHTML = "<h3>CANAIS DE TEXTO</h3>";
     if (!channels.length) {
@@ -200,21 +188,15 @@ function selectServer(server) {
       channelsSection.appendChild(el);
     });
 
-    // Auto-seleciona o primeiro
     if (channels.length) selectChannel(server, channels[0]);
   });
 }
 
-// ---------- Selecionar canal ----------
 function selectChannel(server, channel) {
   currentChannel = channel;
 
-  document.querySelectorAll(".channel").forEach(el => el.classList.remove("active"));
-  const chEls = channelsSection.querySelectorAll(".channel");
-  const idx = channelsSection.querySelectorAll(".channel");
-  // Marca ativo pelo índice do nome
-  chEls.forEach(el => {
-    if (el.textContent.trim() === channel.name) el.classList.add("active");
+  channelsSection.querySelectorAll(".channel").forEach(el => {
+    el.classList.toggle("active", el.textContent.trim() === channel.name);
   });
 
   chatTitle.textContent = channel.name;
@@ -243,7 +225,6 @@ function selectChannel(server, channel) {
   });
 }
 
-// ---------- Render mensagem ----------
 function renderMessage(m) {
   const el = document.createElement("div");
   el.className = "message";
@@ -251,9 +232,13 @@ function renderMessage(m) {
   const avatarInner = m.authorAvatar
     ? `<img src="${m.authorAvatar}" alt="">`
     : initial;
-  const time = m.createdAt?.toDate
-    ? m.createdAt.toDate().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
-    : "";
+
+  let time = "";
+  if (m.createdAt) {
+    const d = new Date(m.createdAt);
+    time = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  }
+
   el.innerHTML = `
     <div class="avatar">${avatarInner}</div>
     <div class="msg-body">
@@ -272,7 +257,6 @@ function escapeHTML(s) {
   return div.innerHTML;
 }
 
-// ---------- Enviar mensagem ----------
 chatForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   if (!currentServer || !currentChannel) return;
@@ -287,7 +271,6 @@ chatForm.addEventListener("submit", async (e) => {
   }
 });
 
-// ---------- Init quando logado ----------
 function startApp() {
   loginScreen.classList.add("hidden");
   app.classList.remove("hidden");
@@ -302,12 +285,10 @@ function startApp() {
     initCarousel(serversTrack, serversCarousel, list, (s) => {
       selectServer(s);
     });
-    // Auto-seleciona o primeiro
     if (list[0]) selectServer(list[0]);
   });
 }
 
-// ---------- Auth state ----------
 onAuth(auth, (user) => {
   if (user) {
     currentUser = user;
@@ -317,9 +298,9 @@ onAuth(auth, (user) => {
     if (unsubServers) unsubServers();
     if (unsubChannels) unsubChannels();
     if (unsubMessages) unsubMessages();
+    unsubServers = unsubChannels = unsubMessages = null;
     app.classList.add("hidden");
     loginScreen.classList.remove("hidden");
-    // Reset visual
     serversTrack.innerHTML = "";
     channelsSection.innerHTML = "<h3>CANAIS DE TEXTO</h3>";
     chatMessages.innerHTML = "";
