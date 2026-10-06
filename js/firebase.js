@@ -6,7 +6,7 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-
 const firebaseConfig = {
   apiKey: "AIzaSyCGxNMAZbfofs_r_m9UcLFxTW432yDAuHs",
   authDomain: "korda-app.firebaseapp.com",
-  databaseURL: "COLA_AQUI_A_URL_DO_RTDB",
+  databaseURL: "https://korda-app-default-rtdb.firebaseio.com",
   projectId: "korda-app",
   storageBucket: "korda-app.firebasestorage.app",
   messagingSenderId: "312645222520",
