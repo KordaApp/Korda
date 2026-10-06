@@ -246,4 +246,4 @@ export async function setUserTagActive(uid, serverId, tag, icon, active) {
 export async function getUserActiveTags(uid) {
   const snap = await get(ref(rtdb, `users/${uid}/activeTags`));
   return snap.exists() ? snap.val() : {};
-    }
+                                   }
