@@ -8,83 +8,128 @@
   <link rel="stylesheet" href="css/app.css" />
 </head>
 <body>
-  <div id="app" class="app-grid">
-    <aside id="servers-rail" class="servers-rail">
-      <div class="server-logo">K</div>
-      <div class="server-item active">BR</div>
-      <div class="server-item">FF</div>
-      <div class="server-item">CS</div>
-      <button class="server-add">+</button>
-    </aside>
 
-    <aside id="channels-panel" class="channels-panel">
-      <div class="server-header">
-        <h2>KORDA BR</h2>
-        <span>Servidor de comunidade</span>
-      </div>
-      <div class="channels-section">
-        <h3>CANAIS DE TEXTO</h3>
-        <div class="channel active"># geral</div>
-        <div class="channel"># anúncios</div>
-        <div class="channel"># memes</div>
-        <div class="channel"># suporte</div>
-      </div>
-      <div class="channels-section">
-        <h3>CANAIS DE VOZ</h3>
-        <div class="channel">🔊 Geral</div>
-        <div class="channel">🔊 Jogos</div>
-      </div>
-    </aside>
+  <div class="app">
 
-    <main id="chat-area" class="chat-area">
-      <div class="chat-header">
-        <h2># geral</h2>
-        <p>Bora trocar uma ideia, mano? 😎</p>
+    <!-- ===== TOPBAR ===== -->
+    <header class="topbar">
+
+      <!-- Logo fixo à esquerda -->
+      <div class="topbar-logo" title="KORDA">K</div>
+
+      <!-- Carrossel infinito de servidores -->
+      <div class="servers-carousel" id="servers-carousel">
+        <div class="servers-track" id="servers-track">
+          <!-- Preenchido pelo JS -->
+        </div>
+        <div class="carousel-fade-left"></div>
+        <div class="carousel-fade-right"></div>
       </div>
-      <div class="chat-messages" id="chat-messages">
-        <div class="message">
-          <div class="avatar">A</div>
-          <div class="msg-body">
-            <div class="msg-head">
-              <strong>Arthur</strong>
-              <span class="time">14:34</span>
+
+      <!-- Ações da direita -->
+      <div class="topbar-actions">
+        <button class="topbar-btn" id="btn-explore" title="Explorar comunidades">🔎</button>
+        <button class="topbar-btn" id="btn-add-server" title="Criar servidor">+</button>
+        <button class="topbar-btn user-chip" id="btn-login" title="Entrar com Google">G</button>
+        <button class="topbar-btn user-chip hidden" id="btn-logout" title="Sair">×</button>
+      </div>
+
+    </header>
+
+    <!-- ===== CORPO ===== -->
+    <div class="app-body">
+
+      <!-- Canais -->
+      <aside class="channels-panel">
+        <div class="server-header">
+          <h2>KORDA BR</h2>
+          <span>Servidor de comunidade</span>
+        </div>
+        <div class="channels-section">
+          <h3>CANAIS DE TEXTO</h3>
+          <div class="channel active"># geral</div>
+          <div class="channel"># anúncios</div>
+          <div class="channel"># memes</div>
+          <div class="channel"># suporte</div>
+        </div>
+        <div class="channels-section">
+          <h3>CANAIS DE VOZ</h3>
+          <div class="channel">🔊 Geral</div>
+          <div class="channel">🔊 Jogos</div>
+        </div>
+      </aside>
+
+      <!-- Chat -->
+      <main class="chat-area">
+        <div class="chat-header">
+          <h2># geral</h2>
+          <p>Bora trocar uma ideia, mano? 😎</p>
+        </div>
+        <div class="chat-messages">
+          <div class="message">
+            <div class="avatar">A</div>
+            <div class="msg-body">
+              <div class="msg-head">
+                <strong>Arthur</strong>
+                <span class="time">14:34</span>
+              </div>
+              <div class="msg-text">Bora, já chamo o pessoal</div>
+              <div class="reactions">👍 2 &nbsp; ❤️ 4</div>
             </div>
-            <div class="msg-text">Bora, já chamo o pessoal</div>
-            <div class="reactions">👍 2 &nbsp; ❤️ 4</div>
           </div>
         </div>
-      </div>
-      <div class="chat-input">
-        <button class="plus">+</button>
-        <input type="text" placeholder="Envie uma mensagem em #geral" />
-        <button class="emoji">😊</button>
-      </div>
-    </main>
+        <div class="chat-input">
+          <button class="plus">+</button>
+          <input type="text" placeholder="Envie uma mensagem em #geral" />
+          <button class="emoji">😊</button>
+        </div>
+      </main>
 
-    <aside id="friends-panel" class="friends-panel">
-      <h3>AMIGOS</h3>
-      <div class="friend">
-        <div class="dot online"></div>
-        <div>
-          <strong>Lukzinn</strong>
-          <small>Jogando Free Fire</small>
+      <!-- Amigos -->
+      <aside class="friends-panel">
+        <h3>AMIGOS</h3>
+        <div class="friend">
+          <div class="dot online"></div>
+          <div><strong>Lukzinn</strong><small>Jogando Free Fire</small></div>
         </div>
-      </div>
-      <div class="friend">
-        <div class="dot online"></div>
-        <div>
-          <strong>zNeto</strong>
-          <small>Jogando CS2</small>
+        <div class="friend">
+          <div class="dot online"></div>
+          <div><strong>zNeto</strong><small>Jogando CS2</small></div>
         </div>
-      </div>
-      <div class="friend">
-        <div class="dot online"></div>
-        <div>
-          <strong>Mimi</strong>
-          <small>Ouvindo música</small>
+        <div class="friend">
+          <div class="dot online"></div>
+          <div><strong>Mimi</strong><small>Ouvindo música</small></div>
         </div>
-      </div>
-    </aside>
+      </aside>
+
+    </div>
+
   </div>
+
+  <script type="module">
+    import { initServersCarousel } from "./js/carousel.js";
+    import { loginWithGoogle, logout } from "./js/auth.js";
+
+    // Servidores placeholder — depois virá do Firestore
+    const mockServers = [
+      { id: "s1", name: "KORDA BR",  icon: null },
+      { id: "s2", name: "Free Fire", icon: null },
+      { id: "s3", name: "CS2",       icon: null },
+      { id: "s4", name: "Minecraft", icon: null },
+      { id: "s5", name: "Música",    icon: null }
+    ];
+
+    initServersCarousel("servers-track", "servers-carousel", mockServers);
+
+    document.getElementById("btn-login")?.addEventListener("click", async () => {
+      try { await loginWithGoogle(); alert("Bem-vindo ao KORDA!"); }
+      catch (e) { alert("Erro: " + e.message); }
+    });
+
+    document.getElementById("btn-logout")?.addEventListener("click", async () => {
+      await logout();
+    });
+  </script>
+
 </body>
 </html>
