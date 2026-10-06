@@ -32,6 +32,14 @@
   <symbol id="i-camera-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"/><path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3l3 3h7l3-3h3a2 2 0 0 1 2 2v3M23 7l-7 5 7 5V7z"/></symbol>
   <symbol id="i-screen" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></symbol>
   <symbol id="i-phone-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.42 19.42 0 0 1-3.33-2.67m-2.67-3.34a19.79 19.79 0 0 1-3.07-8.63A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91"/><line x1="1" y1="1" x2="23" y2="23"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20l-2-12-5 4-3-8-3 8-5-4-2 12z"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></symbol>
 </svg>
 
 <section id="login-screen" class="login-screen">
@@ -43,9 +51,9 @@
     <button class="btn-google" id="btn-google"><svg class="icon"><use href="#i-google"/></svg>Continuar com Google</button>
     <div class="login-divider"><span>ou</span></div>
     <form class="login-form" id="login-form">
-      <label><span>Nome de usuário</span><input type="text" id="input-name" placeholder="Arthur" autocomplete="username" /></label>
-      <label><span>E-mail</span><input type="email" id="input-email" placeholder="voce@email.com" autocomplete="email" required /></label>
-      <label><span>Senha</span><input type="password" id="input-pass" placeholder="••••••••" autocomplete="current-password" required minlength="6" /></label>
+      <label><span>Nome de usuário</span><input type="text" id="input-name" placeholder="Arthur" /></label>
+      <label><span>E-mail</span><input type="email" id="input-email" placeholder="voce@email.com" required /></label>
+      <label><span>Senha</span><input type="password" id="input-pass" placeholder="••••••••" required minlength="6" /></label>
       <button type="submit" class="btn-primary" id="btn-submit">Entrar</button>
     </form>
     <p class="login-toggle"><span id="toggle-text">Não tem conta?</span><button type="button" id="btn-toggle-mode">Criar conta</button></p>
@@ -63,6 +71,7 @@
       <div class="carousel-fade right"></div>
     </div>
     <div class="topbar-actions">
+      <button class="topbar-btn" id="btn-mailbox" title="Caixa de entrada"><svg class="icon"><use href="#i-mail"/></svg><span class="badge hidden" id="mailbox-badge">0</span></button>
       <button class="topbar-btn" id="btn-explore" title="Explorar"><svg class="icon"><use href="#i-search"/></svg></button>
       <button class="topbar-btn green" id="btn-add-server" title="Criar servidor"><svg class="icon"><use href="#i-plus"/></svg></button>
       <button class="topbar-btn" id="btn-logout" title="Sair"><svg class="icon"><use href="#i-logout"/></svg></button>
@@ -73,13 +82,17 @@
     <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
 
     <aside class="channels-panel" id="channels-panel">
-      <div class="server-header">
-        <div class="server-header-top">
-          <h2 id="server-name">Selecione um servidor</h2>
-          <button class="icon-btn" id="btn-server-settings" title="Configurações"><svg class="icon"><use href="#i-settings"/></svg></button>
-        </div>
+      <div class="server-banner-wrap" id="server-banner-wrap">
+        <div class="server-banner" id="server-banner"></div>
+        <div class="server-banner-overlay"></div>
+        <button class="server-banner-settings" id="btn-server-settings" title="Configurações">
+          <svg class="icon"><use href="#i-settings"/></svg>
+        </button>
+      </div>
+      <div class="server-info">
+        <h2 id="server-name">Selecione um servidor</h2>
         <span id="server-sub">—</span>
-        <div class="server-tag" id="server-tag"></div>
+        <div class="server-tag-row" id="server-tag-row"></div>
       </div>
       <div class="channels-section" id="channels-section">
         <div class="empty-channels">Selecione um servidor</div>
@@ -102,8 +115,8 @@
         </div>
       </div>
       <form class="chat-input" id="chat-form">
-        <button type="button" class="icon-btn" title="Anexar"><svg class="icon"><use href="#i-paperclip"/></svg></button>
-        <input type="text" id="chat-input" placeholder="Digite uma mensagem..." autocomplete="off" disabled />
+        <button type="button" class="icon-btn" id="btn-image" title="Enviar imagem"><svg class="icon"><use href="#i-image"/></svg></button>
+        <input type="text" id="chat-input" placeholder="Digite uma mensagem..." disabled />
         <button type="button" class="icon-btn" id="btn-emoji" title="Emoji"><svg class="icon"><use href="#i-smile"/></svg></button>
         <button type="submit" class="icon-btn primary" title="Enviar"><svg class="icon"><use href="#i-send"/></svg></button>
         <div class="emoji-picker hidden" id="emoji-picker"></div>
@@ -119,17 +132,19 @@
   </div>
 </div>
 
+<!-- Modal criar servidor -->
 <div class="modal-backdrop hidden" id="modal-backdrop">
   <div class="modal">
     <div class="modal-head"><h3>Criar servidor</h3><button class="icon-btn" id="modal-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <form id="form-create-server">
-      <label><span>Nome do servidor</span><input type="text" id="server-name-input" placeholder="Ex: KORDA BR" required maxlength="40" /></label>
-      <label><span>Descrição (opcional)</span><input type="text" id="server-desc-input" placeholder="Servidor de comunidade" maxlength="80" /></label>
+      <label><span>Nome do servidor</span><input type="text" id="server-name-input" required maxlength="40" /></label>
+      <label><span>Descrição</span><input type="text" id="server-desc-input" maxlength="80" /></label>
       <button type="submit" class="btn-primary full">Criar servidor</button>
     </form>
   </div>
 </div>
 
+<!-- Modal criar canal -->
 <div class="modal-backdrop hidden" id="channel-backdrop">
   <div class="modal">
     <div class="modal-head"><h3>Criar canal</h3><button class="icon-btn" id="channel-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
@@ -138,50 +153,118 @@
         <label class="type-opt"><input type="radio" name="channel-type" value="text" checked /><span class="type-box"><svg class="icon"><use href="#i-hash"/></svg> Texto</span></label>
         <label class="type-opt"><input type="radio" name="channel-type" value="voice" /><span class="type-box"><svg class="icon"><use href="#i-volume"/></svg> Voz</span></label>
       </div>
-      <label><span>Nome do canal</span><input type="text" id="channel-name-input" placeholder="ex: geral" required maxlength="30" /></label>
-      <label><span>Categoria (opcional)</span><select id="channel-category-select" style="background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;font-size:14px;"><option value="">Sem categoria</option></select></label>
+      <label><span>Nome do canal</span><input type="text" id="channel-name-input" required maxlength="30" /></label>
+      <label><span>Categoria</span><select id="channel-category-select" style="background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;"><option value="">Sem categoria</option></select></label>
       <button type="submit" class="btn-primary full">Criar canal</button>
     </form>
   </div>
 </div>
 
+<!-- Modal criar categoria -->
 <div class="modal-backdrop hidden" id="category-backdrop">
   <div class="modal">
     <div class="modal-head"><h3>Criar categoria</h3><button class="icon-btn" id="category-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
     <form id="form-create-category">
-      <label><span>Nome da categoria</span><input type="text" id="category-name-input" placeholder="Ex: Sala de voz" required maxlength="30" /></label>
+      <label><span>Nome da categoria</span><input type="text" id="category-name-input" required maxlength="30" /></label>
       <button type="submit" class="btn-primary full">Criar categoria</button>
     </form>
   </div>
 </div>
 
+<!-- Modal config servidor (dono) -->
 <div class="modal-backdrop hidden" id="server-settings-backdrop">
-  <div class="modal">
+  <div class="modal modal-tall">
     <div class="modal-head"><h3>Configurações do servidor</h3><button class="icon-btn" id="server-settings-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
-    <form id="form-server-settings">
-      <label><span>Nome</span><input type="text" id="ss-name" maxlength="40" required /></label>
-      <label><span>Descrição</span><input type="text" id="ss-description" maxlength="80" /></label>
-      <label><span>Bio</span><textarea id="ss-bio" maxlength="400" style="min-height:80px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;outline:none;font-family:inherit;font-size:14px;resize:vertical;"></textarea></label>
-      <label><span>URL do ícone (foto/.gif)</span><input type="url" id="ss-icon" placeholder="https://..." /></label>
-      <label><span>URL do banner (foto/.gif)</span><input type="url" id="ss-banner" placeholder="https://..." /></label>
-      <label><span>TAG (até 4 letras)</span><input type="text" id="ss-tag" maxlength="4" placeholder="KBR" style="text-transform:uppercase;" /></label>
-      <label style="flex-direction:row;align-items:center;gap:10px;">
-        <input type="checkbox" id="ss-tag-active" style="width:auto;" />
-        <span>Exibir TAG no meu perfil</span>
-      </label>
-      <p class="hint">Sua TAG aparece como <strong>[TAG]</strong> antes do nome no perfil.</p>
-      <button type="submit" class="btn-primary full">Salvar</button>
-      <button type="button" class="btn-danger full" id="btn-delete-server">Excluir servidor</button>
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-tab="geral">Geral</button>
+      <button class="modal-tab" data-tab="cargos">Cargos</button>
+      <button class="modal-tab" data-tab="membros">Membros</button>
+    </div>
+
+    <!-- TAB GERAL -->
+    <div class="modal-tab-panel" data-panel="geral">
+      <form id="form-server-settings">
+        <label><span>Nome</span><input type="text" id="ss-name" maxlength="40" required /></label>
+        <label><span>Descrição</span><input type="text" id="ss-description" maxlength="80" /></label>
+        <label><span>Bio</span><textarea id="ss-bio" maxlength="400" style="min-height:80px;background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;outline:none;font-family:inherit;resize:vertical;"></textarea></label>
+        <label><span>URL do ícone</span><input type="url" id="ss-icon" placeholder="https://..." /></label>
+        <label><span>URL do banner</span><input type="url" id="ss-banner" placeholder="https://..." /></label>
+        <label><span>TAG (até 4 letras)</span><input type="text" id="ss-tag" maxlength="4" style="text-transform:uppercase;" /></label>
+        <label><span>Ícone da TAG (URL ou emoji)</span><input type="text" id="ss-tag-icon" placeholder="URL ou ⚡" maxlength="200" /></label>
+        <label style="flex-direction:row;align-items:center;gap:10px;"><input type="checkbox" id="ss-tag-active" style="width:auto;" /><span>Exibir minha TAG no perfil</span></label>
+        <button type="submit" class="btn-primary full">Salvar</button>
+        <button type="button" class="btn-danger full" id="btn-delete-server">Excluir servidor</button>
+      </form>
+    </div>
+
+    <!-- TAB CARGOS -->
+    <div class="modal-tab-panel hidden" data-panel="cargos">
+      <div id="roles-list"></div>
+      <button class="btn-primary full" id="btn-new-role" style="margin-top:12px;">+ Criar cargo</button>
+    </div>
+
+    <!-- TAB MEMBROS -->
+    <div class="modal-tab-panel hidden" data-panel="membros">
+      <div id="members-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal perfil do servidor (não-dono) -->
+<div class="modal-backdrop hidden" id="server-profile-backdrop">
+  <div class="modal">
+    <div class="modal-head"><h3 id="sp-title">Sobre o servidor</h3><button class="icon-btn" id="server-profile-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="server-profile-banner" id="sp-banner"></div>
+    <div class="server-profile-body">
+      <div class="server-profile-icon" id="sp-icon"></div>
+      <h2 id="sp-name">—</h2>
+      <p id="sp-desc" class="muted">—</p>
+      <div class="profile-section-title">Sobre</div>
+      <div class="profile-bio" id="sp-bio">—</div>
+      <div class="profile-section-title">Seu perfil neste servidor</div>
+      <label><span>Apelido neste servidor</span><input type="text" id="sp-nick" maxlength="30" placeholder="Deixe vazio pra usar o global" style="width:100%;background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;margin-bottom:10px;" /></label>
+      <label><span>Avatar neste servidor (URL)</span><input type="url" id="sp-avatar" placeholder="https://..." style="width:100%;background:var(--bg-2);border:1px solid var(--border);color:var(--text-0);padding:10px 12px;border-radius:8px;margin-bottom:10px;" /></label>
+      <button class="btn-primary full" id="sp-save">Salvar meu perfil neste servidor</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal criar/editar cargo -->
+<div class="modal-backdrop hidden" id="role-backdrop">
+  <div class="modal">
+    <div class="modal-head"><h3 id="role-modal-title">Criar cargo</h3><button class="icon-btn" id="role-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <form id="form-role">
+      <label><span>Nome do cargo</span><input type="text" id="role-name" required maxlength="30" /></label>
+      <label><span>Cor</span><input type="color" id="role-color" value="#8b5cf6" style="width:60px;height:40px;border-radius:8px;border:1px solid var(--border);background:var(--bg-2);" /></label>
+      <div class="profile-section-title">Permissões</div>
+      <div id="role-perms" class="perms-grid"></div>
+      <button type="submit" class="btn-primary full" id="role-submit">Criar cargo</button>
+      <button type="button" class="btn-danger full hidden" id="role-delete">Excluir cargo</button>
     </form>
   </div>
 </div>
 
+<!-- Modal call -->
 <div class="modal-backdrop hidden" id="call-backdrop">
   <div class="call-modal" id="call-modal"></div>
 </div>
 
+<!-- Modal perfil de usuário -->
 <div class="modal-backdrop hidden" id="profile-backdrop">
   <div class="profile-modal" id="profile-modal"></div>
+</div>
+
+<!-- Modal caixa de entrada -->
+<div class="modal-backdrop hidden" id="mailbox-backdrop">
+  <div class="modal modal-tall">
+    <div class="modal-head"><h3>Caixa de entrada</h3><button class="icon-btn" id="mailbox-close"><svg class="icon"><use href="#i-close"/></svg></button></div>
+    <div class="modal-tabs">
+      <button class="modal-tab active" data-mtab="updates">Atualizações</button>
+      <button class="modal-tab" data-mtab="invites">Convites</button>
+    </div>
+    <div class="modal-tab-panel" data-mpanel="updates"><div id="mailbox-updates" class="mailbox-list"></div></div>
+    <div class="modal-tab-panel hidden" data-mpanel="invites"><div id="mailbox-invites" class="mailbox-list"></div></div>
+  </div>
 </div>
 
 <div class="toast-root" id="toast-root"></div>
