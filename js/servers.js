@@ -7,33 +7,30 @@ export async function createServer(uid, name, description = "") {
   const serversRef = ref(rtdb, "servers");
   const serverId = push(serversRef).key;
   const channelId = push(ref(rtdb, `servers/${serverId}/channels`)).key;
+  const now = Date.now();
 
-  const updates = {};
-  updates[`servers/${serverId}`] = {
-    name,
-    description: description || "Servidor de comunidade",
-    icon: "",
-    ownerId: uid,
-    memberCount: 1,
-    createdAt: Date.now()
-  };
-  updates[`servers/${serverId}/members/${uid}`] = {
-    joinedAt: Date.now(),
-    role: "owner"
-  };
-  updates[`servers/${serverId}/channels/${channelId}`] = {
-    name: "geral",
-    type: "text",
-    position: 0,
-    createdAt: Date.now()
-  };
-  updates[`serverList/${uid}/${serverId}`] = {
-    name,
-    icon: "",
-    addedAt: Date.now()
-  };
+  // Executa todas as escritas em paralelo — cada uma escreve numa folha diferente
+  await Promise.all([
+    set(ref(rtdb, `servers/${serverId}/name`), name),
+    set(ref(rtdb, `servers/${serverId}/description`), description || "Servidor de comunidade"),
+    set(ref(rtdb, `servers/${serverId}/icon`), ""),
+    set(ref(rtdb, `servers/${serverId}/ownerId`), uid),
+    set(ref(rtdb, `servers/${serverId}/memberCount`), 1),
+    set(ref(rtdb, `servers/${serverId}/createdAt`), now),
 
-  await update(ref(rtdb), updates);
+    set(ref(rtdb, `servers/${serverId}/members/${uid}/joinedAt`), now),
+    set(ref(rtdb, `servers/${serverId}/members/${uid}/role`), "owner"),
+
+    set(ref(rtdb, `servers/${serverId}/channels/${channelId}/name`), "geral"),
+    set(ref(rtdb, `servers/${serverId}/channels/${channelId}/type`), "text"),
+    set(ref(rtdb, `servers/${serverId}/channels/${channelId}/position`), 0),
+    set(ref(rtdb, `servers/${serverId}/channels/${channelId}/createdAt`), now),
+
+    set(ref(rtdb, `serverList/${uid}/${serverId}/name`), name),
+    set(ref(rtdb, `serverList/${uid}/${serverId}/icon`), ""),
+    set(ref(rtdb, `serverList/${uid}/${serverId}/addedAt`), now)
+  ]);
+
   return { serverId, channelId };
 }
 
