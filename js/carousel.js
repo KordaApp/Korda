@@ -1,8 +1,3 @@
-/**
- * Carrossel infinito de servidores.
- * Arrastável com mouse e touch (Pointer Events).
- * Com inércia e snap automático para o item mais próximo.
- */
 export function initCarousel(trackEl, containerEl, servers, onSelect) {
   if (!servers.length) {
     trackEl.innerHTML = "";
@@ -16,11 +11,9 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
         : (s.name || "?").slice(0, 2).toUpperCase()}
     </div>`;
 
-  // Renderiza 3 cópias para dar sensação de continuidade
   const set = servers.map(itemHTML).join("");
   trackEl.innerHTML = set + set + set;
 
-  // Aguarda o layout para medir
   requestAnimationFrame(() => {
     const firstItem = trackEl.querySelector(".server-item");
     if (!firstItem) return;
@@ -45,7 +38,6 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
     }
 
     function clampOffset() {
-      // Mantém offset dentro de [-2*setW, 0] para sempre mostrar conteúdo
       while (offset > 0) offset -= setW;
       while (offset < -2 * setW) offset += setW;
     }
@@ -70,7 +62,6 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
 
     function inertiaLoop() {
       if (Math.abs(velocity) < 0.4) {
-        // Snapa para o item mais próximo
         const snap = Math.round(offset / step) * step;
         animateTo(snap);
         return;
@@ -82,7 +73,6 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
       rafId = requestAnimationFrame(inertiaLoop);
     }
 
-    // -------- Pointer events --------
     containerEl.addEventListener("pointerdown", (e) => {
       if (e.button !== undefined && e.button !== 0) return;
       if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
@@ -130,7 +120,6 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
     containerEl.addEventListener("pointerup", endDrag);
     containerEl.addEventListener("pointercancel", endDrag);
 
-    // -------- Clique em servidor --------
     trackEl.addEventListener("click", (e) => {
       if (moved > 8) return;
       const item = e.target.closest(".server-item");
@@ -143,7 +132,6 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
       trackEl.querySelectorAll(`.server-item[data-id="${id}"]`)
         .forEach(el => el.classList.add("active"));
 
-      // Centraliza o item clicado
       const itemX = idx * step;
       const containerCx = containerEl.offsetWidth / 2;
       const target = containerCx - itemW / 2 - itemX;
@@ -153,7 +141,6 @@ export function initCarousel(trackEl, containerEl, servers, onSelect) {
       if (server) onSelect?.(server);
     });
 
-    // Roda do mouse horizontal (desktop)
     containerEl.addEventListener("wheel", (e) => {
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
         e.preventDefault();
